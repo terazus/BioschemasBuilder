@@ -64,7 +64,7 @@
 
 		function parse_spec_file(src, method){
 			var request = new XMLHttpRequest();
-			request.open("GET", src, true);
+			request.open("GET", src, false);
 			try{
 				request.send(null);
 				console.log(request.responseText);
