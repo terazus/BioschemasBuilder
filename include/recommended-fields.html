@@ -1,0 +1,72 @@
+<script>
+	$.datepicker.setDefaults({
+	    // When a date is selected from the picker
+	    onSelect: function(newValue) {
+	        if (window.angular && angular.element){
+	            // Update the angular model
+	            angular.element(this).controller("ngModel").$setViewValue(newValue);
+	        }
+	    }
+	});
+	$( function() {
+	    $( "#datepicker" ).datepicker();
+	    $( "#datepicker2" ).datepicker();
+	});
+</script>
+
+
+
+<h2> Bioschemas DataCatalog <BR> <em> - Recommended Fields - </em></h2>
+<form class="required_fields">
+	<ul class="form-style-1">
+		<li>
+			<label> Alternative names <span class="required"></span> <div class="small"> - {{output.fields.recommended.alternateName.length}} item(s) -</div></label>
+			<div ng-repeat="alt_name in output.fields.recommended.alternateName track by $index">
+	        	<input type="text" class="field-long" ng-model="output.fields.recommended.alternateName[$index]" placeholder="Alternative name {{$index+1}}" />
+	        </div>
+	        <div class="add_item add_field fa fa-plus-circle" ng-click="output.add_alt_name();"> <span>Add more alternative names</span></div>
+
+		</li>
+
+		<li>
+			<label> Identifiers URL <span class="required"></span> <div class="small"> - {{output.fields.recommended.identifier.length}} item(s) -</div></label>
+			<div ng-repeat="identifier in output.fields.recommended.identifier track by $index">
+	        	<input type="url" class="field-long" ng-model="output.fields.recommended.identifier[$index]" placeholder="Identifier {{$index+1}}" />
+	        </div>
+	        <div class="add_item add_field fa fa-plus-circle" ng-click="output.add_identifier();"> <span>Add more identifiers</span></div>
+
+		</li>
+
+		<li>
+			<label> License name and URL</label>
+			<input type="text" name="name" class="field-divided" placeholder="Name" ng-model="output.fields.recommended.license.name"/>&nbsp;
+	    	<input type="url" name="url" class="field-divided" placeholder="URL" ng-model="output.fields.recommended.license.url"/ >
+		</li>
+
+		<li>
+	    	<label>Publication and last modifications date <span class="required"></span></label>
+			<input ng-model='output.fields.recommended.datePublished' id="datepicker" type='text' name="datePublished" class="field-divided" placeholder="Publication Date" />
+			<input ng-model='output.fields.recommended.dateModified' id="datepicker2" type='text'  name="dateModified" class="field-divided" placeholder="Last Modifications Date" />
+	    </li>
+
+	    <li>
+	    	<label> Articles <span class="required"></span><div class="small"> - {{output.fields.recommended.citation.length}} item(s) -</div> </label>
+
+	    	<fieldset class="subfield" ng-repeat="citation in output.fields.recommended.citation track by $index">
+	    		<div>Article {{$index+1}}</div>
+	    		<input type="text" name="name" class="field-divided" placeholder="Name" ng-model="output.fields.recommended.citation[$index].name"/>&nbsp;
+	    		<input type="url" name="url" class="field-divided" placeholder="URL" ng-model="output.fields.recommended.citation[$index].url" ng-required="output.fields.recommended.citation[$index].name"/>
+	    		<textarea name="description" class="field-long field-textarea" placeholder="Description of the article" ng-model="output.fields.recommended.citation[$index].description"></textarea>    		
+	    	</fieldset>
+	    	<div class="add_item add_field fa fa-plus-circle" ng-click="output.add_citation();"> <span>Add more articles</span></div>
+	    </li>
+
+
+
+		<li>
+			<button type="submit" ng-click="output.go_to_required()"> <em class="fa fa-angle-double-left"></em> &nbsp;Previous </button>
+			<button type="submit" ng-click="output.go_to_dataset()">Next &nbsp; <em class="fa fa-angle-double-right"></em> </button>
+		</li>
+	</ul>
+
+</form>

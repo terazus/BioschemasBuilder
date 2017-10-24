@@ -1,0 +1,353 @@
+/******************************************
+************** GENERAL  *************
+**************************************** */
+@font-face {
+    font-family: customFont;
+    src: url(font/AvenirNextLTPro-Cn.otf);
+    font-weight: lighter;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+}
+
+html * {
+    font-family:customFont,Arial,Helvetica ;
+}
+
+html{overflow-x: hidden}
+
+body{
+    background-image: url('http://bioschemas.org/images/subtle_white_feathers.png');
+}
+
+hr{
+	margin:0px;
+}
+
+pre {
+    -moz-tab-size: 4; /* Firefox 4+ */
+    -o-tab-size: 4; /* Opera 11.5 & 12.1 only */
+    tab-size: 4; /* Chrome 21+, Safari 6.1+, Opera 15+ */
+    font-family:Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+h2{
+    margin:0px;
+    text-align: center;
+    color: rgba(11, 121, 75, 1);
+    font-weight: bold;
+}
+
+h2 em{
+    font-size: 0.8em;
+}
+
+h3{
+    margin: 0px;
+    font-size: 1.4em;
+    color: rgba(11, 121, 75, .9);
+}
+
+
+h4{
+    font-size: 1.3em;
+    margin:0px;
+    border:rgba(11, 121, 75, 1);
+    background:rgba(11, 121, 75, 0.9);
+    color:#fff;
+    padding:10px 20px;
+    display: inline-block;
+    margin-bottom: 10px;
+    min-width: 170px;
+    text-align: center;
+}
+
+.row{
+    margin:0px;
+}
+
+.no-padding{
+    padding:0px;
+}
+
+/******************************************
+************** HEADER *************
+**************************************** */
+.page_header{
+    right: 0;
+    z-index: 98;
+    background: #FFF;
+    border-bottom:1px solid #DEDFE0;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+    position: fixed;
+    width: 100%;
+}
+
+.title {
+    display: inline-block;
+}
+
+.title h1{
+    margin-top: 5px;
+    padding-top: 0px;
+    text-align: center;
+}
+
+
+/******************************************
+************** MAIN CONTAINER *************
+**************************************** */
+.main_container{
+    width:1200px !important;
+    padding:20px 40px;
+    border:1px solid #DEDFE0;
+    border-radius:2px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:20px;
+    box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.12);
+    background: #FFF;
+    position: absolute;
+    -webkit-transition: left 0.5s ease, opacity 0.7s ease;
+    left: 0;
+    right: 0;
+    display: inline-block;
+    margin-bottom: 20px;
+    top:50px;
+}
+
+.item_entry{
+    font-size: 1.2em;
+    margin-top: 10px;
+    text-align: justify;
+}
+
+.main_container .button{
+    padding:30px;
+    margin-top: 90px;
+    font-size: 4.5em;
+    width:450px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-transform: uppercase;
+    display:block;
+    background: rgba(11, 121, 75, .9);
+
+}
+
+.main_container .button:active{
+    background: rgba(11, 121, 75, 1);
+}
+
+/* Make @media here to place frames according to screen size*/
+#editRequired,
+#editRecommended,
+#editDataset,
+#output{
+    left:2000px;
+    opacity: 0;
+}
+
+.editor{
+   border:3px solid rgba(11, 121, 75, 1);
+   padding-top:10px;
+   padding-bottom: 10px;
+   margin-top: 30px;
+}
+
+.field_editor{
+    border-right:1px solid rgba(11, 121, 75, 0.9);
+}
+
+.form_item, form button{
+    margin-top:10px;
+}
+
+form input{
+    width:100%;
+    margin-bottom: 15px !important;
+}
+
+.field_description .field_name{
+    display: block;
+    min-width: 300px;
+}
+
+form .field_description{
+    font-size: 0.9em;
+    padding: 0px 10px;
+    margin-bottom: 5px;
+}
+
+
+/******************************************************************************************************************************************************
+************************************************************************************** FORM ***********************************************************
+**************************************************************************************************************************************************** */
+
+.form-style-1 {
+    margin:10px auto;
+    max-width: 800px;
+    padding: 20px 12px 10px 20px;
+    /*font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;*/à
+}
+.form-style-1 li {
+    padding: 0;
+    display: block;
+    list-style: none;
+    margin: 10px 0 0 0;
+}
+.form-style-1 label{
+    margin:0 0 3px 0;
+    padding:0px;
+    display:block;
+    font-weight: bold;
+}
+.form-style-1 input[type=text],
+.form-style-1 input[type=date],
+.form-style-1 input[type=datetime],
+.form-style-1 input[type=number],
+.form-style-1 input[type=search],
+.form-style-1 input[type=time],
+.form-style-1 input[type=url],
+.form-style-1 input[type=email],
+textarea,
+select{
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    border:1px solid #BEBEBE;
+    padding: 7px;
+    margin:0px;
+    outline: none; 
+}
+.form-style-1 input[type=text]:focus,
+.form-style-1 input[type=date]:focus,
+.form-style-1 input[type=datetime]:focus,
+.form-style-1 input[type=number]:focus,
+.form-style-1 input[type=search]:focus,
+.form-style-1 input[type=time]:focus,
+.form-style-1 input[type=url]:focus,
+.form-style-1 input[type=email]:focus,
+.form-style-1 textarea:focus,
+.form-style-1 select:focus{
+    -moz-box-shadow: 0 0 8px #88D5E9;
+    -webkit-box-shadow: 0 0 8px #88D5E9;
+    box-shadow: 0 0 8px #88D5E9;
+    border: 1px solid #88D5E9;
+}
+.form-style-1 .field-divided{
+    width: 49.6%;
+}
+
+.form-style-1 .field-long{
+    width: 100%;
+}
+.form-style-1 .field-select{
+    width: 100%;
+}
+.form-style-1 .field-textarea{
+    height: 100px;
+    margin-bottom:20px;
+}
+
+.form-style-1 select{
+    margin-bottom:10px;
+}
+
+.form-style-1 textarea{
+    resize:vertical;
+}
+
+.form-style-1 input[type=submit], .form-style-1 input[type=button], .form-style-1 button{
+    background: rgba(11, 121, 75, 0.8);
+    padding: 8px 15px 8px 15px;
+    border: none;
+    color: #fff;
+    width:49.8%;
+    display: inline-block;
+}
+.form-style-1 input[type=submit]:hover, .form-style-1 input[type=button]:hover, .form-style-1 button:hover{
+    background: rgba(11, 121, 75, 0.9);
+    box-shadow:none;
+    -moz-box-shadow:none;
+    -webkit-box-shadow:none;
+}
+
+.form-style-1 input[type=submit]:active, .form-style-1 input[type=button]:active, .form-style-1 button:active{
+    background: rgba(11, 121, 75, 1);
+}
+
+.form-style-1 .required{
+    color:red;
+}
+
+form.required_fields{
+    background: rgba(11, 121, 75, .1);
+}
+
+form.required_fields label, form.required_fields input, form.required_fields textarea, .form-style-1 button, .form-style-1 select{
+    font-size: 1.5em;
+}
+
+.fa{
+    color:rgba(11, 121, 75, 0.8);
+}
+
+.fa:hover{
+    cursor:pointer;
+}
+
+.fa-angle-double-right, .fa-angle-double-left{
+    color:#fff;
+}
+
+.fa-plus-circle:active{
+    color:rgba(11, 121, 75, 1);
+}
+
+.form-style-1 label{
+    color:rgba(11, 121, 75, 0.9);
+}
+
+fieldset.subfield{
+    margin-bottom: 15px;
+    padding: 15px;
+    border:1px solid #ccc;
+}
+
+.small{
+    font-size: 0.7em;
+}
+
+
+.add_item{
+    padding-left:20px;
+    margin-bottom: 20px;
+}
+
+/******************************************
+   ************** DatePICKER ************** 
+**************************************** */
+.ui-datepicker{
+    width:250px;
+    background: rgba(11, 121, 75, 1);
+    padding:10px;
+    display:none;
+}
+
+.ui-datepicker table{
+    width:100%;
+}
+
+.ui-datepicker .ui-datepicker-prev{
+    margin-right:15px;
+}
+
+.ui-datepicker a, .ui-datepicker-title{
+    color:#fff;
+}
+
+.ui-datepicker a span{
+    cursor:pointer;
+}

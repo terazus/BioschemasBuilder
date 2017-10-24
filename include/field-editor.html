@@ -1,0 +1,124 @@
+<script>
+	$.datepicker.setDefaults({
+	    // When a date is selected from the picker
+	    onSelect: function(newValue) {
+	        if (window.angular && angular.element){
+	            // Update the angular model
+	            angular.element(this).controller("ngModel").$setViewValue(newValue);
+	        }
+	    }
+	});
+	$( function() {
+	    $( "#datepicker" ).datepicker();
+	});
+</script>
+
+<!-- PROCESS SINGLE VALUE FIELDS -->
+<div ng-show="specifications.subValue.cardinality!='MANY'">
+
+	<!-- Select the input type to add -->
+	<form class="object_editor" ng-show="specifications.subValue.expected_type.length>1 && specifications.subValue.name!='dateModified'">
+		<h4> Select the type of input you want to use </h4>
+		<select ng-model="output.expected_type">
+			<option disabled selected value> Select an option </option>
+			<option ng-repeat="item in specifications.subValue.expected_type">{{item}}</option>
+		</select>
+	</form>
+
+	<!-- TEXT FIELD -->
+	<form ng-submit="output.addField(specifications.subValue.name)" ng-show="output.expected_type==='Text'">
+		<!-- Description (long text) -->
+		<label ng-show="specifications.subValue.name==='description'"> Add a description </label>
+		<textarea ng-model='output.values' ng-show="specifications.subValue.name==='description'"> </textarea>
+		<!-- Short text -->
+		<label ng-show="specifications.subValue.name!='description'"> Add a {{specifications.subValue.name}} as a text</label>
+		<input ng-model='output.values' ng-show="specifications.subValue.name!='description' && output.expected_type==='Text'"> </input>
+		<button type="submit"> Modify this field </button>
+	</form>
+
+	<!-- URL FIELD -->
+	<form ng-submit="output.addURLField(specifications.subValue.name)" ng-show="output.expected_type==='URL'">
+		<label> Add a {{specifications.subValue.name}} as a URL </label>
+		<input ng-model='output.values'> </input>
+		<button type="submit"> Modify this field </button>											
+	</form>
+
+	<!-- DATE FIELD -->
+	<form ng-submit="output.addField(specifications.subValue.name)" ng-show="output.expected_type==='Date'">
+		<label> Add a date </label>
+		<input ng-model='output.values' id="datepicker" type='text'> </input>
+		<div class="datepickerbutton">
+			<button type="submit" style="float:right"> Modify this field </button>
+		</div>
+	</form>
+
+	<!-- OBJECT FIELD -->
+	<div ng-show="output.expected_type!='Text' && output.expected_type!='URL' && output.expected_type!='Date' && output.expected_type!=null">
+		<div ng-show='specifications.subValue.bsc_dec.name!=output.expected_type'> <form class="object_editor"><h4> This object is currently unsupported </h4> </form></div>
+		<div ng-show='specifications.subValue.bsc_dec.name===output.expected_type'>		
+			<form class="object_editor" ng-show="output.expected_type==='CreativeWork' || output.expected_type==='Person' ||  output.expected_type=== 'Organization'" ng-submit="output.addObjectField(specifications.subValue.name, specifications.subValue.bsc_dec.name)">
+				<h4> Add a {{specifications.subValue.name}} as {{output.expected_type}}</h4>
+				<div ng-repeat="subfield in specifications.subValue.bsc_dec.values">
+					<label>{{subfield}}</label>
+					<input type="text" ng-model="output.subObject[subfield]"> </input>
+				</div>
+				<button type="submit"> Add/Modify this field </button>
+			</form>
+		</div>
+	</div>
+
+</div>
+
+
+<!-- PROCESS MULTIPLE VALUES FIELDS -->
+<div ng-show="specifications.subValue.cardinality==='MANY'">
+	<!-- <div ng-show="output.json[specifications.subValue.name]===undefined"> -->
+
+	<!-- INPUT TYPE SELECTOR -->
+	<div> 
+		<!-- Select the input type to add -->
+		<form class="object_editor" ng-show="specifications.subValue.expected_type.length>1 && specifications.subValue.name!='dateModified'">
+			<h4> Select the type of input you want to use </h4>
+			<select ng-model="output.expected_type">
+				<option disabled selected value> Select an option </option>
+				<option ng-repeat="item in specifications.subValue.expected_type">{{item}}</option>
+			</select>
+		</form>
+	</div>
+
+	<!-- TEXT FIELD -->
+	<form ng-submit="output.addFieldArray(specifications.subValue.name)" ng-show="output.expected_type==='Text'">
+		<!-- Description (long text) -->
+		<label ng-show="specifications.subValue.name==='description'"> Add a description </label>
+		<textarea ng-model='output.values' ng-show="specifications.subValue.name==='description'"> </textarea>
+		<!-- Short text -->
+		<label ng-show="specifications.subValue.name!='description'"> Add a {{specifications.subValue.name}} as a text </label>
+		<input ng-model='output.values' ng-show="specifications.subValue.name!='description'"> </input>
+		<button type="submit"> Add/Modify this field </button>
+		<div class="button" ng-click="output.reset_field(specifications.subValue.name)"> Reset this field </div>
+	</form>
+
+	<!-- URL FIELD -->
+	<form ng-submit="output.addURLFieldArray(specifications.subValue.name)" ng-show="output.expected_type==='URL'">
+		<label> Add a {{specifications.subValue.name}} as a URL </label>
+		<input ng-model='output.url'> </input>
+		<button type="submit"> Add/Modify this field </button>
+		<div class="button" ng-click="output.reset_field(specifications.subValue.name)"> Reset this field </div>											
+	</form>
+
+	<div ng-show="output.expected_type!='Text' && output.expected_type!='URL' && output.expected_type!='Date' && output.expected_type!=null">
+		<div ng-show='specifications.subValue.bsc_dec.name!=output.expected_type'> <form class="object_editor"><h4> This object is currently unsupported </h4> </form></div>
+		<div ng-show='specifications.subValue.bsc_dec.name===output.expected_type'>		
+			<form class="object_editor" ng-show="output.expected_type==='CreativeWork' || output.expected_type==='Person' ||  output.expected_type==='Organization' || output.expected_type==='PropertyValue' " ng-submit="output.addObjectFieldArray(specifications.subValue.name, specifications.subValue.bsc_dec.name)">
+				<h4> Add a {{specifications.subValue.name}} as {{output.expected_type}}</h4>
+				<div ng-repeat="subfield in specifications.subValue.bsc_dec.values">
+					<label>{{subfield}}</label>
+					<input type="text" ng-model="output.subObject[subfield]"> </input>
+				</div>
+				<button type="submit"> Add/Modify this field </button>
+				<div class="button" ng-click="output.reset_field(specifications.subValue.name)"> Reset this field </div>
+			</form>
+		</div>
+	</div>
+
+</div>

@@ -1,0 +1,35 @@
+<h2> Bioschemas DataCatalog <BR> <em> - DataSet - </em></h2>
+<form class="required_fields">
+	<ul class="form-style-1"> 
+		<li>
+			<label> Dataset <span class="required"></span> </label>
+			<fieldset class="subfield" ng-repeat="dataset in output.fields.recommended.dataset track by $index">
+				<h3> Dataset Name and URL </h3>
+				<input type="text" name="name" class="field-divided" placeholder="Name" ng-model="output.fields.recommended.dataset[$index].name"/>&nbsp;
+				<input type="url" name="url" class="field-divided" placeholder="URL" ng-model="dataset.url"/>
+
+				<h3> Dataset identifiers URL </span> </h3>
+				<div class="subsubfield" ng-repeat='identifier in dataset.identifier track by $index'>									
+					<input type="url" name="identifier" class="field-long" placeholder="URL of the dataset identifier" ng-model="dataset.identifier[$index]"/>
+				</div>
+				<div class="add_item add_field fa fa-plus-circle" ng-click="output.add_dataset_identifier(dataset);"> <span>Add more identifiers</span></div>
+
+				<h3> Dataset description </h3>
+				<textarea name="description" class="field-long field-textarea" placeholder="Description of the Dataset" ng-model="dataset.description"></textarea>
+
+				<h3> Dataset Keywords </span> </h3>
+				<div class="subsubfield" ng-repeat='keyword in dataset.keywords track by $index'>									
+					<input type="text" name="keyword" class="field-long" placeholder="Keyword {{$index+1}}" ng-model="dataset.keywords[$index]"/>
+				</div>
+				<div class="add_item add_field fa fa-plus-circle" ng-click="output.add_dataset_keyword(dataset);"> <span>Add more keywords</span></div>
+
+			</fieldset>
+			<div class="add_item add_field fa fa-plus-circle" ng-click="output.add_dataset();"> <span>Add more Dataset</span></div>								 
+		</li>
+
+		<li>
+			<button type="submit" ng-click="output.go_to_recommended('Previous')"> <em class="fa fa-angle-double-left"></em> &nbsp;Previous </button>
+			<button type="submit" ng-click="output.go_to_end();">Generate JSON-LD code &nbsp; <em class="fa fa-angle-double-right"></em> </button>
+		</li>
+	<ul>
+</form>

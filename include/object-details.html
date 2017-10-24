@@ -1,0 +1,64 @@
+<div ng-repeat="item in specifications.specs">
+
+	<div ng-show="item.name==='DataCatalog'"> 
+
+		<h2> Bioschemas {{item.name}} </h2> 
+
+		<div class="row item_entry" id="description">
+			<h3> Description: </h3> {{item.spec.description}}
+		</div>
+
+		<div class="row item_entry" id="spec_type">
+			<h3> Type of specification: </h3> {{item.spec.spec_type}}
+		</div>
+
+		<div class="row item_entry" id="hierarchy">
+			<h3> Hierarchy: </h3> 
+			<ul>
+				<li ng-repeat="parent in item.spec.hierarchy">{{parent}}</li>
+			</ul> 
+		</div>
+
+		<div class="row item_entry" id="url">
+			<h3> Specification URL: </h3> http://bioschemas.org/specifications/{{item.spec.name}}/specification/
+		</div>
+
+		<div class="row item_entry" id="status">
+			<h3> Specification status: </h3> {{item.spec.status}}
+		</div>
+
+		<div class="row item_entry" id="fields">
+
+			<div ng-repeat="fields in item.spec.properties" class="no-padding col-lg-4 col-md-4 col-sm-4">
+				<div ng-show="fields.state==='required'">
+					<h3> Required fields: </h3>
+					<ul>
+						<li ng-repeat="field in fields.fields">{{field.name}}</li>
+					</ul>
+				</div>
+
+				<div ng-show="fields.state==='recommended'">
+					<h3> Recommended fields: </h3>
+					<ul>
+						<li ng-repeat="field in fields.fields">{{field.name}}</li>
+					</ul>
+				</div>
+
+				<div ng-show="fields.state==='optional'">
+					<h3> Optional fields: </h3>
+					<ul>
+						<li ng-repeat="field in fields.fields">{{field.name}}</li>
+					</ul>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<button type="button" class="button btn btn-success" onclick="openNav()">
+	Get Started 
+</button>
