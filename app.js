@@ -11,6 +11,7 @@
 				item_path = 'specifications/'+allowed_objects[key]+'/specification.html';
 				yml_spec = parse_spec_file(item_path, 'yml');
 				item_spec = yml_spec[0];
+				console.log(item_spec);
 				
 
 				if (item_spec.name == "DataCatalog"){
