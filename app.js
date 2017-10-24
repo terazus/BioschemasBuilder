@@ -66,7 +66,7 @@
 
 		function parse_spec_file(src, method){
 			var request = new XMLHttpRequest();
-			request.open("GET", src, false);
+			request.open("GET", src, true);
 			try{
 				request.send(null);
 				if (method=='yml'){
