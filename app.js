@@ -10,9 +10,7 @@
 			for (key in allowed_objects){
 				item_path = 'specifications/'+allowed_objects[key]+'/specification.html';
 				yml_spec = parse_spec_file(item_path, 'yml');
-				item_spec = yml_spec[0];
-				console.log(yml_spec);
-				
+				item_spec = yml_spec[0];		
 
 				if (item_spec.name == "DataCatalog"){
 
@@ -69,6 +67,7 @@
 			request.open("GET", src, true);
 			try{
 				request.send(null);
+				console.log(request.responseText);
 				if (method=='yml'){
 					var my_yml = yaml.load_all(request.responseText);
 					return my_yml;
