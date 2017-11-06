@@ -1,0 +1,59 @@
+<div ng-repeat="specification in specifications">
+	<ul class="form_list">
+		<h2> Bioschemas DataCatalog </h2>
+		<li ng-repeat='fieldgroup in specification.fields track by $index'>
+			<h2> 
+				<em ng-if="$index===0"> -- Required Fields --</em> 
+				<em ng-if="$index===1"> -- Recommended Fields --</em> 
+				<em ng-if="$index===2"> -- Optional Fields --</em> 
+			</h2>
+
+
+			<form class="required_fields form-style-1" name="requiredFields" ng-if="$index===0">
+
+				<ul>
+					<li ng-repeat="field in fieldgroup | orderBy:'priority'">
+						<md-content>
+
+							<div field-input ng-if="field.output==='input' || field.output==='textarea'" fieldProperties="{{field}}"> </div>
+
+							<div field-object ng-if="field.output==='object'"> </div>
+
+						</md-content>
+					</li>
+				</ul>
+
+			</form>
+
+			<form class="required_fields form-style-1" name="recommendedFields" ng-if="$index===1">
+				<ul>
+					<li ng-repeat="field in fieldgroup | orderBy:'priority'">
+						<md-content>
+
+							<div field-input ng-if="field.output==='input' || field.output==='textarea'" fieldProperties="{{field}}"> </div>
+							<div field-object ng-if="field.output==='object'"> </div>
+
+							<div field-import ng-if="field.output==='import'"> 
+							</div>
+
+						</md-content>
+					</li>
+				</ul>
+			</form>
+
+			<form class="required_fields form-style-1" name="optionalFields" ng-if="$index===2">
+				<ul>
+					<li ng-repeat="field in fieldgroup | orderBy:'priority'">
+						<md-content>
+
+							<div field-input ng-if="field.output==='input' || field.output==='textarea'"> </div>
+							<div field-object ng-if="field.output==='object'"> </div>
+
+						</md-content>
+					</li>
+				</ul>
+			</form>
+
+		</li>
+	<ul>
+</div>

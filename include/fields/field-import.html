@@ -1,0 +1,22 @@
+<ul class="object_field">
+	<div class="field_title">
+        <h3>{{field.name}}</h3>
+        <md-button class="md-icon-button question_title">
+            <md-tooltip md-direction="left">{{field.sdo_desc}}</md-tooltip>
+            <md-icon class="fa fa-question-circle"> </md-icon>
+         </md-button>
+    </div>
+
+    <li  ng-repeat="subfields in field.fields">
+
+        <ul ng-repeat="fieldgroup in subfields.fields">
+
+            <li class="field_form" ng-repeat="subfield in fieldgroup | orderBy:'priority'">
+                <md-content>
+                    <div field-input ng-if="subfield.output==='input' || subfield.output==='textarea'" fieldProperties="{{subfield}}"> </div>
+                </md-content>       	    
+            </li>
+
+        </ul>
+	</li>
+</ul>

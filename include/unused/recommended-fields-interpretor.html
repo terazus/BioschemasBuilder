@@ -1,0 +1,147 @@
+<fieldset class="form-group field_title object_field" ng-if="fieldName.field!='publication'">
+
+	<!-- TITLE AND DESCRIPTION -->
+	<div class="field_header">
+		<label style="display:inline-block"> {{ fieldName.field }} </label>
+		<span 	id="{{'description_clicker_2_' + $index}}" 
+				style="margin-left:10px" 
+				class="fa fa-question-circle question" 
+				ng-mouseenter="output.display_description('2_'+$index, 'show')"
+				ng-mouseleave="output.display_description('2_'+$index, 'hide')"> </span>
+		
+		<div class="field_desc" id="{{'desc_2_'+$index}}" ng-if='specifications.specs[0].spec.properties[1].fields[fieldName.field].sdo_desc!=""' ng-bind-html="specifications.specs[0].spec.properties[1].fields[fieldName.field].sdo_desc | trust"> </div>
+
+		<div 	class="fa fa-chevron-down" 
+				id="{{'#chevron_'+$index}}" 
+				style="right:0; float:right; position:relative; top:7px; font-size: 1.5em;" 
+				data-toggle="collapse" 
+				data-target="{{'#field_'+$index}}"
+				ng-click="panel.change_chevron('#chevron_'+$index);"
+		>
+		</div>
+	</div>
+
+	<!-- FIELD FORM -->
+	<div id="{{'field_'+$index}}" class="collapse in">
+
+		<!-- FIELD FORM BODY -->
+		<div class="field_form">
+
+			<!-- INPUT IS DATASET -->
+			<div ng-if='field.expected_type[0]==="Dataset"' ng-click='output.json[fieldName.field]["@type"]="Dataset"'>
+				<h3> Dataset Name and URL </h3>
+				<input type="text" name="name" class="field-divided" placeholder="Name" ng-model='output.json[fieldName.field].name'/>&nbsp;
+				<input type="url" name="url" class="field-divided" placeholder="URL" ng-model='output.json[fieldName.field].url'/>
+
+				<h3> Dataset identifiers URL </span> </h3>
+				<div class="subsubfield">									
+					<input type="url" name="identifier" class="field-long" placeholder="URL of the dataset identifier" ng-model='output.json[fieldName.field].identifier'/>
+				</div>
+				<div class="add_item add_field fa fa-plus-circle"> <span>Add more identifiers</span></div>
+
+				<h3> Dataset description </h3>
+				<textarea name="description" class="field-long field-textarea" placeholder="Description of the Dataset" ng-model='output.json[fieldName.field].description'></textarea>
+
+				<h3> Dataset Keywords </span> </h3>
+				<div class="subsubfield">									
+					<input type="text" name="keyword" class="field-long" placeholder="Keyword" ng-model='output.json[fieldName.field].keywords'/>
+				</div>
+				<div class="add_item add_field fa fa-plus-circle"> <span>Add more keywords</span></div>
+			</div>
+
+			<!-- INPUT IS STRING -->
+			<div ng-if='field.expected_type[0]==="Text"'>
+				<!-- STR INPUT -->
+				<input 	type="text"
+						name="fieldName.field"
+						placeholder="{{fieldName.field}}"
+						ng-model='output.json[fieldName.field]'
+						class='field-long' 
+						ng-if="	fieldName.field!='description'"
+				/>
+			</div>
+
+			<!-- FIELD IS IDENTIFIERS (INPUT IS URL) TO BE REPLACED WITH ng-if='field.expected_type[0]==="URL"'-->
+			<div ng-if='fieldName.field==="identifier"'>
+				<input 	type="url"
+						name="fieldName.field"
+						placeholder="{{fieldName.field}}"
+						ng-model='output.json[fieldName.field]'
+						class='field-long' 
+				/>
+			</div>
+
+			<!-- INPUT IS AN OBJECT -->
+			<div class="container-fluid no-padding" ng-if='specifications.specs[0].spec.properties[1].fields[fieldName.field].bsc_dec!=""' ng-click="output.json[fieldName.field]['@type']=field.bsc_dec['@type']">
+
+				<!-- HANDLING SINGLE VALUES -->
+				<div ng-if='specifications.specs[0].spec.properties[1].fields[fieldName.field].cardinality!="MANY"'>
+					<div ng-repeat='subfield in field.bsc_dec.fields track by $index'>		
+						<div class="required_field col-lg-6" ng-if="subfield==='name' || subfield==='url' || subfield==='email' || subfield==='location'">
+							<h3> {{fieldName.field}} {{subfield}} </h3>
+							<input type="text" placeholder="{{subfield}}" ng-if="subfield==='name'" ng-model="output.json[fieldName.field].name"/>
+							<input type="url" placeholder="{{subfield}}" ng-if="subfield==='url'" ng-model="output.json[fieldName.field].url"/>
+							<input type="mail" placeholder="{{subfield}}" ng-if="subfield==='email'" ng-model="output.json[fieldName.field].email"/>
+							<input type="text" placeholder="{{subfield}}" ng-if="subfield==='location'" ng-click='output.json[fieldName.field].location={"@type":"PostalAddress"}' ng-model="output.json[fieldName.field].location.addressLocality"/>
+						</div>
+						<div class="required_field" ng-if="subfield==='description'">
+							<h3> {{fieldName.field}} {{subfield}} </h3>
+							<textarea class='field-long field-textarea' placeholder="{{subfield}}" ng-model="output.json[fieldName.field].description"/>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- HANDLING MULTIPLE VALUES -->
+				<div ng-if='specifications.specs[0].spec.properties[1].fields[fieldName.field].cardinality==="MANY"'>
+
+					<!-- FIELD[0] -->
+					<div class="container-fluid" ng-click="output.toArray(fieldName.field); output.json[fieldName.field][0]['@type'] = field.bsc_dec['@type'] ">
+						<div ng-repeat='subfield in field.bsc_dec.fields'>		
+							<div class="required_field col-lg-6" ng-if="subfield==='name' || subfield==='url' || subfield==='email' || subfield==='location'">
+								<h3> {{fieldName.field}} {{subfield}} </h3>
+								<input type="text" placeholder="{{subfield}}" ng-if="subfield==='name'" ng-model="output.json[fieldName.field][0].name"/>
+								<input type="url" placeholder="{{subfield}}" ng-if="subfield==='url'" ng-model="output.json[fieldName.field][0].url"/>
+								<input type="mail" placeholder="{{subfield}}" ng-if="subfield==='email'" ng-model="output.json[fieldName.field][0].email"/>
+								<input type="text" placeholder="{{subfield}}" ng-if="subfield==='location'" ng-click='output.json[fieldName.field][0].location={"@type":"PostalAddress"}' ng-model="output.json[fieldName.field].location.addressLocality"/>
+							</div>
+							<div class="required_field" ng-if="subfield==='description'">
+								<h3> {{fieldName.field}} {{subfield}} </h3>
+								<textarea class='field-long field-textarea' placeholder="{{subfield}}" ng-model="output.json[fieldName.field][0].description"/>
+							</div>
+						</div>
+					</div>
+
+					<!-- SUBSEQUENT FIELDS -->
+					<div class="container-fluid" ng-repeat="subvalue in output.json[fieldName.field] track by $index" ng-if="!$first" ng-click="output.json[fieldName.field][$index]['@type'] = field.bsc_dec['@type'] " style="border-top:1px solid #ccc; padding-top:15px;">
+						<div ng-repeat='subfield in field.bsc_dec.fields'>							
+							<div class="required_field col-lg-6" ng-if="subfield==='name' || subfield==='url' || subfield==='email' || subfield==='location'">
+								<h3> {{fieldName.field}} {{subfield}} {{$parent.$parent.$index}}</h3>
+								<input type="text" placeholder="{{subfield}}" ng-if="subfield==='name'" ng-model="output.json[fieldName.field][$parent.$parent.$parent.$index][subfield]"/>
+								<input type="url" placeholder="{{subfield}}" ng-if="subfield==='url'" ng-model="output.json[fieldName.field][$parent.$parent.$index][subfield]"/>
+								<input type="mail" placeholder="{{subfield}}" ng-if="subfield==='email'" ng-model="output.json[fieldName.field][$parent.$parent.$index][subfield]"/>
+								<input type="text" placeholder="{{subfield}}" ng-if="subfield==='location'" ng-click='output.json[fieldName.field][$parent.$parent.$parent.$index][subfield]={"@type":"PostalAddress"}' ng-model="output.json[fieldName.field][$parent.$parent.$parent.$index][subfield].addressLocality"/>
+							</div>
+							<div class="required_field" ng-if="subfield==='description'">
+								<h3> {{fieldName.field}} {{subfield}} {{$parent.$parent.$index}}</h3>
+								<textarea class='field-long field-textarea' placeholder="{{subfield}}" ng-model="output.json[fieldName.field][$parent.$parent.$index][subfield]"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>			
+
+		</div>
+
+		
+
+
+		<!-- FIELD FOOTER -->
+		<div class="field_footer" ng-if="specifications.specs[0].spec.properties[1].fields[fieldName.field].cardinality==='MANY'" ng-click="output.addNewValue(fieldName.field)";>
+			<!-- FIELD ADD SUBSEQUENT ITEMS (multiple values only) -->
+			<div class="add_item add_field fa fa-plus-circle">
+				<span>Add more {{ fieldName.field }}</span>
+			</div>
+		</div>
+	</div>
+</fieldset>

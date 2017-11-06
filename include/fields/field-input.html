@@ -1,0 +1,128 @@
+<!-- SINGLE VALUE FIELDS -->
+<md-input-container ng-if="field.cardinality==='ONE'">
+
+    <label>{{field.name}}</label>
+
+    <md-button class="md-icon-button question">
+        <md-tooltip md-direction="left">{{field.sdo_desc | trust}}</md-tooltip>
+        <md-icon class="fa fa-question-circle"> </md-icon>
+	</md-button>
+
+    <!-- input url -->
+    <input  name="{{'item_'+field.name}}" 
+            ng-if="field.expected_type[0].toLowerCase()==='url'" 
+            ng-model="output.json[field.name]" 
+            ng-required="{{field.marginality==='Minimum'}}" 
+            minlength="6"  
+            maxlength="100" 
+            ng-pattern="/^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/" >
+    </input>
+
+
+    <!-- input short text -->
+    <input  name="{{'item_'+field.name}}" 
+            ng-if="field.expected_type[0].toLowerCase()==='text' && field.output==='input'" 
+            ng-required="{{field.marginality==='Minimum'}}" 
+            ng-model="output.json[field.name]">
+    </input>
+
+    <!-- input long text -->
+    <textarea   name="{{'item_'+field.name}}" 
+                ng-if="field.output==='textarea'" 
+                ng-required="{{field.marginality==='Minimum'}}" 
+                mdInput 
+                mdTextareaAutosize 
+                minRows="6" 
+                ng-model="output.json[field.name]">
+    </textarea>
+
+    <!-- input datepicker -->
+	<md-datepicker  name="{{'item_'+field.name}}" 
+                    type="{{field.expected_type[0].toLowerCase()}}" 
+                    ng-if="field.expected_type[0].toLowerCase()==='date'" 
+                    ng-required="{{field.marginality==='Minimum'}}" 
+                    ng-model="output.json[field.name]"> 
+    </md-datepicker>
+    
+    <!-- Hint
+    <div class="hint">{{field.sdo_desc}}</div>
+	--> 
+   <div error-handler> </div>
+</md-input-container>
+
+
+<!-- MULTIPLE VALUE FIELDS -->
+<div ng-if="field.cardinality==='MANY'" class="object_field">
+
+    <div class="field_title">
+        <label>{{field.name}}</label>
+        <md-button class="md-icon-button question_title">
+            <md-tooltip md-direction="bottom">{{field.sdo_desc | trust}}</md-tooltip>
+            <md-icon class="fa fa-question-circle"> </md-icon>
+        </md-button>   
+    </div>
+    
+    <div class="field_form">
+
+        <!-- INITIATOR (field 0) --> 
+        <md-input-container class="md-block" md-no-float>
+            <!-- input short text -->
+            <input  name="{{'item_'+field.name}}" 
+                    ng-if="field.expected_type[0].toLowerCase()==='text'" 
+                    ng-required="{{field.marginality==='Minimum'}}" 
+                    ng-model="output.json[field.name][0]"
+                    ng-click="output.fieldToArray(field.name);"
+                    placeholder="({{field.expected_type[0].toLowerCase()}})">
+            </input>
+
+            <!-- input url -->
+            <input  name="{{'item_'+field.name}}" 
+                    ng-if="field.expected_type[0].toLowerCase()==='url'" 
+                    ng-model="output.json[field.name][0]" 
+                    ng-required="{{field.marginality==='Minimum'}}" 
+                    minlength="6" 
+                    maxlength="100" 
+                    ng-pattern="/^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/" 
+                    ng-click="output.fieldToArray(field.name);" 
+                    placeholder="({{field.expected_type[0].toLowerCase()}})">
+            </input>
+
+            <div error-handler> </div>
+        </md-input-container>
+
+        <!-- SUBSEQUENT VALUES -->
+        <md-input-container ng-repeat="subvalue in output.json[field.name] track by $index" ng-if="!$first" class="md-block" md-no-float>
+
+            <!-- input short text -->
+            <input  name="{{'item_'+field.name}}{{$index+1}}" 
+                    ng-if="field.expected_type[0].toLowerCase()==='text'"  
+                    ng-model="output.json[field.name][$index]"
+                    placeholder="{{field.name}} {{$index+1}} ({{field.expected_type[0].toLowerCase()}})">
+            </input>
+
+            <!-- input url -->
+            <input  name="{{'item_'+field.name}}{{$index+1}"
+                    ng-if="field.expected_type[0].toLowerCase()==='url'" 
+                    ng-model="output.json[field.name][$index]" 
+                    minlength="6" 
+                    maxlength="100" 
+                    ng-pattern="/^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/" 
+                    placeholder="({{field.expected_type[0].toLowerCase()}})">
+            </input>
+
+            <md-button class="md-icon-button question_title removesubval" ng-click="output.remove_item(field.name, $index);">
+                <md-tooltip md-direction="left">remove item</md-tooltip>
+                <md-icon class="remove-subvalue fa fa-minus-circle"> </md-icon>
+            </md-button>
+
+
+        </md-input-container>
+    </div>
+
+    <!-- ADD SUBVALUES TO FIELD (multiple values only) -->
+    <md-button class="md-icon-button field_footer" ng-click='console.log("lol");output.json[field.name].push("")'>
+        <md-tooltip md-direction="right">Add more {{ field.name }}</md-tooltip>
+        <md-icon class="fa fa-plus-circle"> </md-icon>
+    </md-button>
+</div>
+

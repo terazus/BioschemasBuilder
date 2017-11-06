@@ -1,66 +1,281 @@
 (function () {
-	var app = angular.module('builder', []);
+	var app = angular.module('builder', ['ngMaterial', 'ngMessages', 'ngAria', 'ngAnimate'])
+	.config(function($mdThemingProvider) {
+	  	$mdThemingProvider.theme('default')
+		    .primaryPalette('teal');
+	});
+
+	var specification_is_built = false;
+	var output_is_built = false;
 
 	app.controller('SpecificationBuilder', function(){
-		this.specs = make_specs(allowed_objects);
+		if (specification_is_built == false){
+			this.specs = make_specs(mainSpecificationName);
+			specification_is_built = true;
+			//console.log(this.specs);
+		}
 
 		function make_specs(allowed_objects){
-			var specs = [];
 
-			for (key in allowed_objects){
-				item_path = 'specifications/'+allowed_objects[key]+'/specification.html';
-				yml_spec = parse_spec_file(item_path, 'yml');
-				item_spec = yml_spec[0];
-				
+			var string_types = ["url", "email", "date", "text", "number"];
 
-				if (item_spec.name == "DataCatalog"){
+			// Setting up needed variables
+			var newSpec = {}; // This is the spec that we are going to return at the end of the function
+			newSpec.fields = {};
+			var item_path = 'specifications/'+allowed_objects+'/specification.html';
+			var yml_spec = parse_spec_file(item_path, 'yml');
+			var specification = yml_spec[0]; // Getting the specification
 
-					var required = [];
-					var recommended = [];
-					var optional = [];
-
-					for (subkey in yml_spec[0].properties){
-						var field = yml_spec[0].properties[subkey];					
-
-						if (field.marginality == 'Minimum'){
-							required.push(field);
-						}
-
-						if (field.marginality == 'Recommended'){
-							recommended.push(field);
-						}
-					
-						if (field.marginality == 'Optional'){
-							optional.push(field);
-						}
-					}
-
-					item_spec.properties = [
-						{
-							state: 'required',
-							fields: required
-						},
-						{
-							state: 'recommended',
-							fields: recommended
-						},
-						{
-
-							state: 'optional',
-							fields: optional							
-						}
-					];
-				}
-
-
-				specs.push(
-				{
-					name: allowed_objects[key],
-					spec: item_spec
-				});
+			if (yml_spec == false){
+				return false;
 			}
 
-			return specs;
+			// These are for later!
+			var fields_list = {
+				required: [],
+				recommended: [],
+				optional: []
+			};
+
+			// Let's iterate over the fields properties
+			for (parentFieldName in specification){
+
+				// Isolating the properties field
+				if (parentFieldName != "properties"){
+					newSpec[parentFieldName] = specification[parentFieldName];
+				}
+
+				// Properties are isolated in this loop!
+				else {
+
+					var fields = specification[parentFieldName];
+
+					// iterating over the properties field (this is where the actual fields are held)
+					for (fieldKey in fields){
+						var fieldProperties = fields[fieldKey];
+						var expectedTypes = fieldProperties.expected_type;
+
+						
+						// Cleaning up identifier -- to be removed --
+						if (fieldProperties.name == "identifier") {	
+							expectedTypes = ["url"]; 
+							fieldProperties.expected_type = expectedTypes;
+						}
+
+						// Cleaning up location -- to be removed --
+						if (fieldProperties.name == "location") { 
+							expectedTypes = ["PostalAddress"];
+							fieldProperties.expected_type = expectedTypes;
+							fieldProperties.bsc_dec = {
+								"@type": "PostalAddress",
+								"fields": ["name"]
+							};
+						}
+
+						// Transforming bsc_dec to an array if it's a string
+						if (fieldProperties.bsc_dec != "" 
+							&& fieldProperties.bsc_dec != undefined 
+							&& fieldProperties.bsc_dec != null 
+							&& fieldProperties.bsc_dec != undefined 
+							&& typeof fieldProperties.bsc_dec == 'string'){
+					
+							// Is it parsable?
+							try{
+
+								var firstParse = fieldProperties.bsc_dec.split(";");
+								if (firstParse.length > 1){
+									console.log("Woot but not yet");
+								}
+								else{
+									subfields = parseBSC_DEC(firstParse);
+									if (subfields == false){
+										fieldProperties.sdo_desc = fieldProperties.bsc_dec;
+										fieldProperties.bsc_dec = undefined;
+									}
+									else{
+										fieldProperties.bsc_dec = subfields;
+									}
+								}
+
+							}
+							catch(e){
+								fieldProperties.bsc_dec = undefined;
+							}
+							
+						}
+
+						expectedTypes = _.without(expectedTypes, "DateTime");
+						fieldProperties.expected_type = expectedTypes;
+
+						// Keep cleaning expected types by iterating over the expectedTypes item.
+						for (itemKey in expectedTypes){
+							var item = expectedTypes[itemKey];
+
+						
+							// Switching integer to number for HTML compatibility
+							if (item=="Integer"||item=="integer"||item=="int"){
+								item = "number";
+								expectedTypes[itemKey] = "number";
+								fieldProperties.expected_type=expectedTypes;
+							}
+
+							//Cleaning up DateTime to date for HTML compatiblity
+							if (item=="DateTime"){
+								item = "date";
+								expectedTypes[itemKey] = "date";
+								fieldProperties.expected_type=expectedTypes;
+							}
+
+							// If the item is not a string type (an object input is expected)
+							if (string_types.indexOf(item.toLowerCase())==-1){
+
+
+								// The input is an object but there is no spec in the BSC_DEC variable
+								if (fieldProperties.bsc_dec == "" || fieldProperties.bsc_dec == undefined || fieldProperties.bsc_dec == null){
+
+									// Try to load the spec from /specifications/ folder
+									if (item!=mainSpecificationName){ var subSpec = make_specs(item); }
+
+									//Preventing endless loop
+									else{
+										var subSpec = false;
+									}
+									
+									// The spec couldn't be loaded, clean up the field
+									if (subSpec == false){
+										if (fieldProperties.expected_type.length > 1){
+											fieldProperties.expected_type = _.without(fieldProperties.expected_type, item);
+										}
+										else {
+											fieldProperties.expected_type = ["Text"];
+										}
+										delete fieldProperties.bsc_dec;
+
+									}
+
+									// The spec has been correctly loaded
+									else{
+										fieldProperties.fields = [];
+										fieldProperties.fields.push({
+											"@type":subSpec.name,
+											"fields": subSpec.fields
+										});
+										delete fieldProperties.bsc_dec;
+									}
+									//addFieldtoSpec(fieldProperties, fields_list);
+								}
+
+								// There is something in the BSC_DEC and the input is an object
+								else{
+									if (fieldProperties.bsc_dec["@type"].toLowerCase() == item.toLowerCase()){
+										fieldProperties.fields = fieldProperties.bsc_dec;
+										delete fieldProperties.bsc_dec;
+									} 
+									else{
+										// Tweek here if we want to insert a template!
+										if (fieldProperties.expected_type.length>1){
+											fieldProperties.expected_type =  _.without(fieldProperties.expected_type, item);
+										}
+										else{
+											fieldProperties.expected_type = ["Text"];
+										}
+									}
+								}
+								
+							}
+						}
+
+						// If there is only one expected type left
+						if (fieldProperties.expected_type.length==1) {
+
+							// It's a string
+							if (string_types.indexOf(fieldProperties.expected_type[0].toLowerCase())!=-1){
+								//fieldProperties.expected_type = expectedTypes;
+																
+								if (fieldProperties.name=="description"){
+									fieldProperties.output = 'textarea';
+								}
+								else{
+									fieldProperties.output = 'input';
+								}
+
+								delete fieldProperties.bsc_dec;
+								addFieldtoSpec(fieldProperties, fields_list);
+							}
+
+							// It's an object
+							else{
+								if (fieldProperties.fields[0] != undefined){
+									fieldProperties.output = 'import';
+								}
+								else{
+									fieldProperties.output = 'object';
+								}
+
+								addFieldtoSpec(fieldProperties, fields_list);
+							}
+						}
+
+						else if (fieldProperties.expected_type.length>1){
+							
+							fieldProperties.expected_type = _.without(fieldProperties.expected_type, "Text");			
+							if (fieldProperties.expected_type.length>1){
+								fieldProperties.expected_type = _.without(fieldProperties.expected_type, "URL");
+							}
+							if (string_types.indexOf(fieldProperties.expected_type[0].toLowerCase())!=-1){
+									fieldProperties.output = 'input';
+							}
+							else{
+								if (fieldProperties.fields[0] != undefined){
+									fieldProperties.output = 'import';
+								}
+								else{
+									fieldProperties.output = 'object';
+								}
+							}
+							addFieldtoSpec(fieldProperties, fields_list);;
+						}
+						
+					}
+				}
+			}
+
+			newSpec.fields = fields_list;
+			return newSpec;
+		}
+
+		function parseBSC_DEC(subfield){
+			var secondSplit = subfield[0].split(":");
+			if (secondSplit.length<=1){
+				return false;
+			}
+			else{
+				var thirdSplit = secondSplit[1].split(',');
+				var subItemSpec = {
+					"@type": secondSplit[0],
+					"fields": thirdSplit
+				};
+				return subItemSpec;
+			}
+		}
+
+		function addFieldtoSpec(field, fields_list){
+			if (field.marginality == 'Minimum'){
+				if (weightedRequiredFields[field.name] == undefined){
+					var field_priority = 6;
+				}
+				else{
+					var field_priority = weightedRequiredFields[field.name];
+				}
+				field.priority = field_priority;
+				fields_list.required.push(field);
+			}
+			else if (field.marginality == 'Recommended'){
+				fields_list.recommended.push(field);
+			}
+			else if (field.marginality == 'Optional'){
+				fields_list.optional.push(field);
+			}
 		}
 
 		function parse_spec_file(src, method){
@@ -79,308 +294,26 @@
 		}
 	});
 
-
 	app.controller('OutputBuilder', function(){
 
 		this.error = "";
 		this.json = {
 			"@type": 'DataCatalog',
-			"@context": 'http://schema.org',
+			"@context": 'http://schema.org'
 		}
 
-		this.initiate_fields = function(){
-			var fields = {
-				required: {
-					keywords: [""],
-					name: "",
-					url: "",
-					description: "",
-					provider: null
-				},
-				recommended: {
-					citation: [{"@type": 'CreativeWork'}],
-					license: {"@type": "CreativeWork"},
-					alternateName: [""],
-					identifier: [""],
-					datePublished: "",
-					dateModified: "",
-					dataset: [{"@type": "Dataset", identifier:[""], keywords:[""]}]
-				}
-			}
-			return fields;
-		}
-
-		this.fields = this.initiate_fields();
-
-		this.initiate_json = function(){
-			for (field_name in this.fields.required){
-				field_value = this.fields.required[field_name];
-				if (field_name == 'provider'){
-					var provider = {};
-					if (field_value.type == 'Person'){
-						provider['email'] = field_value.email;
-					}
-					else if(field_value.type == 'Organization'){
-						provider['url'] = field_value.url;
-					}
-					provider['@type'] = field_value.type;
-					provider['name'] = field_value.name;
-					this.json.provider = provider;
-				}
-				else if (field_name == 'keywords'){
-					if (field_value.length == 1){
-						this.json[field_name] = field_value[0];
-					}
-					else{
-						this.json[field_name] = this.cleanArray(this.uniq(field_value));
-					}
-				}
-				else{
-					this.json[field_name] = field_value;
-				}
-				this.json['@id'] = this.fields.required.url;
+		this.fieldToArray = function(field_name){
+			if (this.json[field_name]==undefined){
+				this.json[field_name] = [];
 			}
 		}
 
-		this.add_recommended_fields = function(){
-			for (field_name in this.fields.recommended){
-				field_value = this.fields.recommended[field_name];
-
-				// Field is a string
-				if (typeof field_value != 'object'){
-					if (field_value != ""){
-						this.json[field_name] = field_value;
-					}
-					else{
-						this.json[field_name] = undefined;
-					}
-				}
-
-				// Field is either an object either an array
-				else {
-
-					// Field is an array
-					if (field_value.hasOwnProperty('length')){
-
-						// Field is not Articles, not Dataset => it's an array of strings
-						if (field_name != 'citation' && field_name != 'dataset'){
-
-							// Array isn't 'empty'
-							if (field_value!=[""] && field_value[0]!=""){
-								//clean the array but removing empty strings and dupes
-								var cleanedArray = this.cleanArray(this.uniq(field_value));
-
-								// Array contains 1 element
-								if (field_value.length == 1 || cleanedArray.length == 1){
-									this.json[field_name] = field_value[0];
-								}
-								// Array cotnains more than one element
-								else{
-									this.json[field_name] = cleanedArray; 
-								}
-
-							}
-							else{
-								this.json[field_name] = undefined;
-							}	
-						}
-
-						else{
-
-							// The array only has one value
-							if (field_value.length == 1)
-							{
-								// Citation Field
-								if (field_name == 'citation'){ 
-									this.json['citation'] = this.processCitation(field_value[0]);						
-								}
-								// Dataset Field
-								if (field_name == 'dataset'){
-									this.json['dataset'] = this.processDataset(field_value[0]);
-								}
-							}
-
-							else{
-								var temp_array = [];
-
-								for (key in field_value){
-									item = field_value[key];
-									if (field_name == 'citation'){
-										var tested_item = this.processCitation(item);
-										if (tested_item != undefined){
-											temp_array.push(tested_item);
-										}
-									}
-
-									else if (field_name == 'dataset'){
-										var tested_item = this.processDataset(item);
-										if (tested_item != undefined){
-											temp_array.push(tested_item);
-										}
-									}
-								}
-								if (temp_array.length > 0){
-									if (temp_array.length == 1){
-										this.json[field_name] = temp_array[0];
-									}
-									else{
-										this.json[field_name] = temp_array;
-									}
-								}
-							}
-						}
-					}
-
-					// Field is a plain object (actually, only License should be included)
-					else {
-						if ((field_value.name != undefined && field_value.name != "")
-							&& (field_value.url != undefined && field_value.url != "")){
-							this.json[field_name] = field_value;
-						}
-						else{
-							this.json[field_name] = undefined;
-						}
-					}
-				}
+		this.addNewValue = function(field_name){
+			var lastValue = this.json[field_name][this.json[field_name].length - 1];
+			if (lastValue != {}){
+				this.json[field_name].push({});
 			}
-		}
-
-
-		this.processCitation = function(citation){
-			if (citation.name != undefined 
-				&& citation.name != "" 
-				&& citation.url != undefined 
-				&& citation.url != "" )
-			{
-					return citation;
-			}
-			else{
-				return undefined;
-			}
-		}
-
-		this.processDataset = function(dataset){
-			if (dataset.name != undefined 
-				&& dataset.name != "" 
-				&& dataset.url != undefined 
-				&& dataset.url != ""
-				&& dataset.keywords != undefined 
-				&& dataset.keywords != ""
-				&& dataset.keywords != [""] )
-			{
-					if (this.cleanArray(dataset.identifier) == undefined){
-						dataset.identifiers = undefined;
-					}
-					return dataset;
-			}
-			else{
-				return undefined;
-			}
-		}
-
-
-		this.add_keyword = function(){
-			this.fields.required.keywords.push("");
-		}
-
-		this.add_alt_name = function(){
-			this.fields.recommended.alternateName.push("");
-		}
-
-		this.add_identifier = function(){
-			this.fields.recommended.identifier.push("");
-		}
-
-		this.add_citation = function(){
-			this.fields.recommended.citation.push({name:"", url:"", description:"", "@type":"CreativeWork"});
-		}
-
-		this.add_dataset = function(){
-			this.fields.recommended.dataset.push({"@type":"Dataset", identifier:[""], keywords:[""]});
-		}
-
-		this.add_dataset_identifier = function(dataset){
-			dataset.identifier.push("");
-		}
-
-		this.add_dataset_keyword = function(dataset){
-			dataset.keywords.push("");
-		}
-
-		this.go_to_start = function(){
-			$('html, body').animate({ scrollTop: 0 });
-			document.getElementById("mainContainer").style.left = "0px";
-			document.getElementById("editRequired").style.left = "2000px";
-			document.getElementById("editRequired").style.opacity = "0";
-			document.getElementById("mainContainer").style.opacity = "1";
-		}
-
-		this.go_to_recommended = function(state){
-			var errors = false;
-
-			if (state == 'Next'){
-				for (field_name in this.fields.required){
-					field_value = this.fields.required[field_name];
-					if (field_value == null || field_value.length == 0 || field_value == undefined || field_value[0] == ""){
-						errors = true;
-					}
-				}
-
-				if (errors==false){
-					this.error = "";
-					$('html, body').animate({ scrollTop: 0 });
-					document.getElementById("editRequired").style.left = "-3500px";
-					document.getElementById("editRecommended").style.left = "0";
-					document.getElementById("editRecommended").style.right = "0";
-					document.getElementById("editDataset").style.left = "2000px";
-					document.getElementById("editRequired").style.opacity = "0";
-					document.getElementById("editDataset").style.opacity = "0";
-					document.getElementById("editRecommended").style.opacity = "1";
-					this.initiate_json();
-				}
-			}
-
-			else if (state=='Previous'){
-				$('html, body').animate({ scrollTop: 0 });
-				document.getElementById("editRequired").style.left = "-3500px";
-				document.getElementById("editRecommended").style.left = "0";
-				document.getElementById("editRecommended").style.right = "0";
-				document.getElementById("editDataset").style.left = "2000px";
-				document.getElementById("editRequired").style.opacity = "0";
-				document.getElementById("editDataset").style.opacity = "0";
-				document.getElementById("editRecommended").style.opacity = "1";
-			}
-		}
-
-		this.go_to_required = function(){
-			$('html, body').animate({ scrollTop: 0 });
-			document.getElementById("editRecommended").style.left = "2000px";
-			document.getElementById("editRequired").style.left = "0";
-			document.getElementById("editRequired").style.right = "0";
-			document.getElementById("editRecommended").style.opacity = "0";
-			document.getElementById("editRequired").style.opacity = "1";
-		}
-
-		this.go_to_dataset = function(){
-			$('html, body').animate({ scrollTop: 0 });
-			document.getElementById("editRecommended").style.left = "-3500px";
-			document.getElementById("editDataset").style.left = "0";
-			document.getElementById("editDataset").style.right = "0";
-			document.getElementById("output").style.left = "2000px";		
-			document.getElementById("editRecommended").style.opacity = "0";
-			document.getElementById("output").style.opacity = "0";
-			document.getElementById("editDataset").style.opacity = "1";
-		}
-
-		this.go_to_end = function(){
-			$('html, body').animate({ scrollTop: 0 });
-			document.getElementById("editDataset").style.left = "-3500px";
-			document.getElementById("output").style.left = "0";
-			document.getElementById("output").style.right = "0";
-			document.getElementById("editDataset").style.opacity = "0";
-			document.getElementById("output").style.opacity = "1";
-			this.add_recommended_fields();
-		}
+		}		
 
 		this.uniq = function(a) {
 		    var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
@@ -410,33 +343,110 @@
   			return undefined;
 		}
 
+		this.remove_item = function(field_name, item_index){
 
+			var output_array = [];			
+			//this.json[field_name] = this.json[field_name].slice(item_index, 0);
 
+			for (key in this.json[field_name]){
+				if (key != item_index){
+					output_array.push(this.json[field_name][key])
+				}
+			}
+
+			if (output_array.length == 0){
+				output_array = [""];
+			}
+			this.json[field_name] = output_array;
+		}
 	});
 
+	app.controller('PanelController', function(){
 
+		this.go_to_required = function (){
+			$('html, body').animate({ scrollTop: 0 });
+			document.getElementById("mainContainer").style.left = "-3500px";
+			document.getElementById("mainContainer").style.opacity = "0";
+			document.getElementById("editRequired").style.left = "0px";
+			document.getElementById("editRequired").style.opacity = "1";
+			//document.getElementById("editRecommended").style.left = "2000px";
+			//document.getElementById("editRecommended").style.opacity = "0";
+		}
 
+		this.go_to_start = function(){
+			$('html, body').animate({ scrollTop: 0 });
+			document.getElementById("mainContainer").style.left = "0px";
+			document.getElementById("editRequired").style.left = "2000px";
+			document.getElementById("editRequired").style.opacity = "0";
+			document.getElementById("mainContainer").style.opacity = "1";
+		}
 
+		this.go_to_dataset = function(){
+			$('html, body').animate({ scrollTop: 0 });
+			//document.getElementById("editRecommended").style.left = "-3500px";
+			//document.getElementById("editDataset").style.left = "0px";
+			//document.getElementById("output").style.left = "2000px";		
+			//document.getElementById("editRecommended").style.opacity = "0";
+			//document.getElementById("output").style.opacity = "0";
+			//document.getElementById("editDataset").style.opacity = "1";
+		}
 
+		this.go_to_recommended = function(state){
+			$('html, body').animate({ scrollTop: 0 });
+			document.getElementById("editRequired").style.left = "-3500px";
+			//document.getElementById("editRecommended").style.left = "0px";
+			//document.getElementById("editDataset").style.left = "2000px";
+			document.getElementById("editRequired").style.opacity = "0";
+			//document.getElementById("editDataset").style.opacity = "0";
+			//document.getElementById("editRecommended").style.opacity = "1";
+		}
 
-
-	var allowed_objects = ["DataCatalog", "Dataset"];
-
-	app.filter("prettyJSON", () => json => JSON.stringify(json, null, 4));
-
-	app.directive('fieldEditor', function(){
-		return {
-			restrict: 'A',
-			templateUrl: 'include/field-editor.html'
-		};
+		this.change_chevron = function(target_id){
+			if (document.getElementById(target_id).classList.contains("fa-chevron-down")) {
+				document.getElementById(target_id).classList.remove("fa-chevron-down");
+				document.getElementById(target_id).classList.add("fa-chevron-right");
+			}
+			else if (document.getElementById(target_id).classList.contains("fa-chevron-right")) {
+				document.getElementById(target_id).classList.add("fa-chevron-down");
+				document.getElementById(target_id).classList.remove("fa-chevron-right");
+			}
+		}
 	});
 
-	app.directive('fieldSelector', function(){
-		return {
-			restrict: 'A',
-			templateUrl: 'include/field-selector.html'
-		};
+	var mainSpecificationName = "DataCatalog";
+
+	var weightedRequiredFields = {
+		'name': 1,
+		'url': 2,
+		'description': 3,
+		'endDate': 5,
+		'startDate': 4,
+		'keywords': 4,
+		'provider': 5
+	};
+
+	app.filter('reverse', function() { 
+		return function(items) { 
+			return items.slice().reverse();	
+		}; 
 	});
+
+	app.filter('object2Array', function() {
+	    return function(input) {
+	    	var out = []; 
+	    	for(i in input){
+	    		out.push(input[i]);
+	    	}
+	      	return out;
+    	}
+    });
+
+	app.filter("trust", ['$sce', function($sce) {
+	  	return function(htmlCode){
+	    	return $sce.trustAsHtml(htmlCode);
+	 	}
+	}]);
+
 
 	app.directive('topHeader', function(){
 		return {
@@ -452,29 +462,43 @@
 		};
 	});
 
-	app.directive('requiredFields', function(){
+	app.directive('fieldIterator', function(){
 		return {
 			restrict: 'A',
-			templateUrl: 'include/required-fields.html'
+			templateUrl: 'include/fields-iterator.html',
+		}
+	});
+
+	app.directive('fieldInput', function(){
+		return {
+			restrict: 'A',
+			templateUrl: 'include/fields/field-input.html',
+			link: function(scope, element, attrs){
+				var field_as_json = angular.fromJson(attrs.fieldproperties);
+				scope.field = field_as_json ;
+			}
 		};
 	});
 
-	app.directive('recommendedFields', function(){
+	app.directive('fieldObject', function(){
 		return {
 			restrict: 'A',
-			templateUrl: 'include/recommended-fields.html'
+			templateUrl: 'include/fields/field-object.html'
 		};
 	});
 
-	app.directive('datasetFields', function(){
+	app.directive('fieldImport', function(){
 		return {
 			restrict: 'A',
-			templateUrl: 'include/dataset-fields.html'
+			templateUrl: 'include/fields/field-import.html',
 		};
 	});
 
+	app.directive('errorHandler', function(){
+		return {
+			restrict: 'A',
+			templateUrl: 'include/fields/error-handler.html'
+		};
+	});
 
 })();
-
-
-

@@ -3,63 +3,78 @@
 <HTML ng-app="builder">
 
 	<HEAD>
-	<link rel="stylesheet" type='text/css' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-	<link rel="stylesheet" type='text/css' href="app.css"/>
-	<link rel="stylesheet" type='text/css' href="BootstrapXL/BootstrapXL.css"/>
-	<link rel="stylesheet" type='text/css' href="font-awesome/css/font-awesome.min.css"/>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type='text/css' href="lib/bootstrap.min.css"/>
 
-	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/i18n/angular-locale_br-fr.js"></script>
-	<script type="text/javascript" src="app.js"></script>
-	<script type="text/javascript" src="overlay.js"></script>
-	<script type="text/javascript" src="yaml-js/yaml.js"></script>
-	<script type="text/javascript" src="is-url/index.js"></script>
-	<script type="text/javascript" src="https://code.angularjs.org/1.6.5/angular-animate.min.js"> </script>
+		<link rel="stylesheet" type='text/css' href="app.css"/>
+		<link rel="stylesheet" type='text/css' href="lib/font-awesome/css/font-awesome.min.css"/>
+		
 
 
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta charset="UTF-8">
+		<script type="text/javascript" src="lib/jquery.min.js"></script>
+		<script src="lib/jquery-ui.min.js"></script>
 
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	
+		<script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
 
+		<!-- Angular Material requires Angular.js Libraries -->
+		<link rel="stylesheet" href="lib/angular/angular-material.min.css" type="text/css">
+		<script type="text/javascript" src="lib/angular/angular.min.js"></script>
+		<script type="text/javascript" src="lib/angular/angular-animate.min.js"> </script>
+		<script type="text/javascript" src="lib/angular/angular-aria.min.js"></script>
+		<script type="text/javascript" src="lib/angular/angular-messages.min.js"></script>
+		<script type="text/javascript" src="lib/angular/angular-material.min.js"></script>
+		<script type="text/javascript" src="lib/yaml-js/yaml.js"></script>
+		<script type="text/javascript" src="lib/is-url/index.js"></script>
+		<script type="text/javascript" src="lib/underscore-min.js"></script>
+		
+		<script type="text/javascript" src="app.js"></script>
+		
+		
+
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
 	</HEAD>
 
-	<BODY ng-controller="SpecificationBuilder as specifications">
+	<BODY ng-controller="SpecificationBuilder as specifications" ng-cloak>
 
 		<div class="container-fluid'" ng-controller="OutputBuilder as output">
 
 			<!-- HEADER -->
 			<div class='row page_header container-fluid' top-header> </div>
 
-			<!-- WELCOME FRAME -->
-			<div class='container row main_container' id="mainContainer"> <div class="identidy" object-details> </div> </div>
-			<!-- REQUIRED FIELDS FRAME -->
-			<div required-fields class='container main_container' id="editRequired">
-			</div>
-			<!-- RECOMMENDED FIELDS FRAME -->
-			<div recommended-fields class='container main_container' id="editRecommended">
-			</div>
-			<!-- DATASET FIELDS FRAME -->
-			<div dataset-fields class='container main_container' id="editDataset">	
+			<!-- PAGE -->
+			<div class="row main_page" ng-controller="PanelController as panel">
+
+				<div class="col-lg-6 editor_container">
+
+					<!-- WELCOME FRAME -->
+					<div class='row main_container' id="mainContainer">
+						<div class="identidy" object-details> </div> 
+					</div>
+
+					<!-- Processing fields -->
+					<div field-iterator class='row main_container' id="editRequired" ng-app="BlankApp">
+					</div>
+				</div>
+
+				<div class="col-lg-6 json_output">			
+					<h2> DataCatalog Metadata <BR> <em> - JSON-LD Code - </em> </h2>
+
+					<div class="item_entry">
+						<h3> How to use: </h3> 
+						
+					</div>
+					<BR>
+					<div class="item_entry">
+						<h3> Your JSON-LD code: </h3>
+						Copy - Paste this code on your web page to expose your data catalog metadata.
+						<pre>&#60;script type="application/ld+json"&#62;<BR>{{output.json | json:4}}<BR>&#60;/script&#62;</pre>
+					</div>
+				</div>
+
 			</div>
 
-			<!-- JSON CODE FRAME -->
-			<div class='container main_container' id="output">
-				<h2> Bioschemas DataCatalog <BR> <em> - JSON-LD Code - </em></h2>
-				<div> Copy paste this code anywhere on your web page to have your metadata exposed. </div>
-				<pre>&#60;script type="application/ld+json"&#62;<BR>{{output.json | prettyJSON}}<BR>&#60;/script&#62;</pre>
-
-				<formclass="required_fields">
-				<ul class="form-style-1">
-					<button class="field-long" type="submit" ng-click="output.go_to_dataset()"> <em class="fa fa-angle-double-left"></em> &nbsp;Previous </button>
-				</ul>
-				</form>
-			</div>
-			
 		</div>
 
 

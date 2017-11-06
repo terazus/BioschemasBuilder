@@ -1,0 +1,105 @@
+<li ng-repeat="field in fieldgroup | orderBy:'priority'" ng-if="fields.fieldState==='0'">
+
+	<div layout="column" ng-cloak="" class="md-inline-form inputdemoBasicUsage">
+		<md-content>
+
+
+		  	<md-input-container class="md-block" md-no-float ng-if="field.output!='object'">
+			    <label>{{field.name}}</label>
+			    <md-button class="md-icon-button question">
+			        <md-tooltip md-direction="left">{{field.sdo_desc}}</md-tooltip>
+			        <md-icon class="fa fa-question-circle"> </md-icon>
+				</md-button>
+			    <!-- input url -->
+			    <input name="{{'item_'+field.name}}" ng-if="field.expected_type[0].toLowerCase()==='url'" ng-model="output.json[field.name]" required minlength="10" maxlength="100" ng-pattern="/^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/" />
+			    <!-- input short text -->
+			    <input name="{{'item_'+field.name}}" ng-if="field.expected_type[0].toLowerCase()==='text' && field.output==='input'" required ng-model="output.json[field.name]"/>			    
+			    <!-- input long text -->
+			    <textarea name="{{'item_'+field.name}}" ng-if="field.output==='textarea'" required mdInput mdTextareaAutosize minRows="6" ng-model="output.json[field.name]"/>
+			    <!-- input datepicker -->
+				<md-datepicker name="{{'item_'+field.name}}" type="{{field.expected_type[0].toLowerCase()}}" ng-if="field.expected_type[0].toLowerCase()==='date'" required ng-model="output.json[field.name]"> </md-datepicker>
+			    
+			    <!--<div class="hint">{{field.sdo_desc}}</div>-->
+			   
+			    <!-- Error handler -->
+			    <div ng-messages="requiredFields['item_'+field.name].$error">
+		            <div ng-message="required" class="my-message">You must supply a {{field.name}}</div>	
+		            <div ng-message="pattern" class="my-message">You must provide a valid {{field.expected_type[0].toLowerCase()}}</div>	        
+	            </div>
+
+			</md-input-container>
+
+			<md-input-container class="md-block" md-no-float ng-if="field.output!='object' && field.cardinality==='MANY'">
+				<input class="smaller_field" name="{{'item_'+field.name+'_1'}}" ng-if="field.expected_type[0].toLowerCase()==='text' && field.output==='input'" ng-model="output.json[field.name]"/>
+				<md-button class="md-icon-button question_title">
+			        <md-tooltip md-direction="left">remove item</md-tooltip>
+			        <md-icon class="remove-subvalue fa fa-minus-circle"> </md-icon>
+			    </md-button>
+			</md-input-container>
+
+
+			<div class="object_field" ng-if="field.output==='object'">
+
+				<div ng-if="field.fields['@type']!='PostalAddress'">
+					<div  class="field_title">
+						<h3>{{field.name}} <em class="small"> ({{field.fields['@type']}}) </em> </h3>
+						<md-button class="md-icon-button question_title">
+					        <md-tooltip md-direction="left">{{field.sdo_desc}}</md-tooltip>
+					        <md-icon class="fa fa-question-circle"> </md-icon>
+					     </md-button>
+					</div>
+
+					<div class="field_form" ng-if="field.fields['@type']!='PostalAddress'">
+						<md-input-container class="md-block" md-no-float ng-repeat="subfield in field.fields.fields">
+						    <label>{{subfield}}</label>
+						    <input type='text' name="{{field.name+'_'+subfield}}" required/>
+						</md-input-container>
+					</div>
+				</div>
+
+				<!--<md-input-container class="md-block" md-no-float ng-if="field.fields['@type']==='PostalAddress'">
+				    <label>{{field.name}}</label>
+				    <input type='text' name="{{field.name+'_'+subfield}}" /> 
+				</md-input-container>-->
+			</div>
+
+			<!-- ADD SUBVALUES TO FIELD (multiple values only) -->
+			<div class="field_footer" ng-if="field.cardinality==='MANY'";>				
+				<div class="add_item add_field fa fa-plus-circle">
+					<span>Add more {{ field.name }}</span>
+				</div>
+			</div>
+
+		</md-content>
+	</div>
+</li>
+
+
+<!--
+<li ng-repeat="field in fieldgroup" ng-if="fields.fieldState!='0'">
+
+	<div ng-if="field.expected_type[0].toLowerCase()==='date'">
+		
+		<label class="inline">{{field.name}}</label>
+		<div class="datepickerdemoBasicUsage">
+			<md-datepicker ng-model="birthday" type="{{field.expected_type[0].toLowerCase()}}"> 
+			</md-datepicker>
+		</div>
+	</div>
+</li>
+
+
+Copyright 2016 Google Inc. All Rights Reserved. 
+Use of this source code is governed by an MIT-style license that can be foundin the LICENSE file at http://material.angularjs.org/HEAD/license.
+
+
+</li>
+-->
+
+
+<!-- PREVIOUS/NEXT BUTTONS-->
+<li>
+	<button class="submit" type="submit" ng-click="panel.go_to_start()"> <em class="fa fa-angle-double-left"></em> &nbsp;Previous </button> 
+	<button class="submit" type="submit" ng-click=" panel.go_to_recommended()">Next &nbsp; <em class="fa fa-angle-double-right"></em> </button>
+	<!-- requiredFields.$valid && -->
+</li>

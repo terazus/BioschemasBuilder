@@ -1,0 +1,33 @@
+<!-- Error handler required fields-->
+<div ng-if="field.marginality==='Minimum'">
+    <div class="field-errors" ng-messages="requiredFields['item_'+field.name].$error" role="alert" multiple>
+        <div ng-message="required" class="my-message">You must supply a {{field.name}}</div>   	
+        <div ng-message="pattern" class="my-message">You must provide a valid {{field.expected_type[0].toLowerCase()}}</div>
+        <div ng-message="valid" class="my-message">You must provide a valid {{field.expected_type[0].toLowerCase()}}</div>	 
+        <div ng-message="minlength" class="my-message">Not enough caracters to accept input (minimum is 6)</div>            
+    </div>
+</div>
+
+<!-- Error handler recommended fields -->
+<div ng-if="field.marginality==='Recommended'">
+    <div class="field-errors" ng-messages="recommendedFields['item_'+field.name].$error" role="alert" multiple>
+        <div ng-message="required" class="my-message">You must supply a {{field.name}}</div>    
+        <div ng-message="pattern" class="my-message">You must provide a valid {{field.expected_type[0].toLowerCase()}}</div>
+        <div ng-message="valid" class="my-message">You must provide a valid {{field.expected_type[0].toLowerCase()}}</div>
+        <div ng-message="minlength" class="my-message">Not enough caracters to accept input (minimum is 6)</div>                
+    </div>
+</div>
+
+<!-- Error handler recommended fields -->
+<div ng-if="field.marginality==='Optional'" >
+    <div class="field-errors" ng-messages="optionalFields['item_'+field.name].$error" role="alert" multiple> 
+        <div ng-message="required" class="my-message">You must supply a {{field.name}}</div>    
+        <div ng-message="pattern" class="my-message">You must provide a valid {{field.expected_type[0].toLowerCase()}}</div>
+        <div ng-message="valid" class="my-message">You must provide a valid {{field.expected_type[0].toLowerCase()}}</div>
+        <div ng-message="minlength" class="my-message">Not enough caracters to accept input (minimum is 6)</div>                
+    </div>
+</div> 
+
+
+
+<!-- TODO: HANDLE ERRORS FOR SUBVALUES (URL mostly)-->

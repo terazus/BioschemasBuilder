@@ -1,53 +1,53 @@
-<div ng-repeat="item in specifications.specs">
+<div ng-repeat="item in specifications">
 
-	<div ng-show="item.name==='DataCatalog'"> 
+	<div> 
 
-		<h2> Bioschemas {{item.name}} </h2> 
+		<h2> Bioschemas {{item.name}} Builder </h2> 
 
 		<div class="row item_entry" id="description">
-			<h3> Description: </h3> {{item.spec.description}}
+			<h3> Description: </h3> {{item.description}}
 		</div>
 
 		<div class="row item_entry" id="spec_type">
-			<h3> Type of specification: </h3> {{item.spec.spec_type}}
+			<h3> Type of specification: </h3> {{item.spec_type}}
 		</div>
 
 		<div class="row item_entry" id="hierarchy">
 			<h3> Hierarchy: </h3> 
 			<ul>
-				<li ng-repeat="parent in item.spec.hierarchy">{{parent}}</li>
+				<li ng-repeat="parent in item.hierarchy">{{parent}}</li>
 			</ul> 
 		</div>
 
 		<div class="row item_entry" id="url">
-			<h3> Specification URL: </h3> http://bioschemas.org/specifications/{{item.spec.name}}/specification/
+			<h3> Specification URL: </h3> http://bioschemas.org/specifications/{{item.name}}/specification/
 		</div>
 
 		<div class="row item_entry" id="status">
-			<h3> Specification status: </h3> {{item.spec.status}}
+			<h3> Specification status: </h3> {{item.status}}
 		</div>
 
 		<div class="row item_entry" id="fields">
 
-			<div ng-repeat="fields in item.spec.properties" class="no-padding col-lg-4 col-md-4 col-sm-4">
-				<div ng-show="fields.state==='required'">
+			<div ng-repeat="fields in item.fields track by $index" class="no-padding col-lg-4 col-md-4 col-sm-4">
+				<div ng-show="$index===0">
 					<h3> Required fields: </h3>
 					<ul>
-						<li ng-repeat="field in fields.fields">{{field.name}}</li>
+						<li ng-repeat="field in fields">{{field.name}}</li>
 					</ul>
 				</div>
 
-				<div ng-show="fields.state==='recommended'">
+				<div ng-show="$index===1">
 					<h3> Recommended fields: </h3>
 					<ul>
-						<li ng-repeat="field in fields.fields">{{field.name}}</li>
+						<li ng-repeat="field in fields">{{field.name}}</li>
 					</ul>
 				</div>
 
-				<div ng-show="fields.state==='optional'">
+				<div ng-show="$index===2">
 					<h3> Optional fields: </h3>
 					<ul>
-						<li ng-repeat="field in fields.fields">{{field.name}}</li>
+						<li ng-repeat="field in fields">{{field.name}}</li>
 					</ul>
 				</div>
 
@@ -59,6 +59,6 @@
 
 </div>
 
-<button type="button" class="button btn btn-success" onclick="openNav()">
+<button type="button" class="button btn btn-success" ng-click="panel.go_to_required();">
 	Get Started 
 </button>

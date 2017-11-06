@@ -1,0 +1,103 @@
+<div class="field_title">
+
+	<label style="display:inline-block">	{{ fieldName.field }} <span class="required"> * </span> </label> 
+	<span 	id="{{'description_clicker_' + $index}}" 
+			style="margin-left:10px" 
+			class="fa fa-question-circle question" 
+			ng-mouseenter="output.display_description($index, 'show')"
+			ng-mouseleave="output.display_description($index, 'hide')"> 
+	</span>
+	
+	<div class="field_desc" id="{{'desc_'+$index}}">
+		{{ specifications.specs[0].spec.properties[0].fields[fieldName.field].sdo_desc }}
+	</div>
+
+
+	<!-- SINGLE VALUE FIELDS-->
+	<div ng-if="specifications.specs[0].spec.properties[0].fields[fieldName.field].cardinality!='MANY'"> 
+
+		<!-- URL INPUT-->
+		<input 	type="url"
+				name="fieldName.field"
+				placeholder="{{fieldName.field}}"
+				ng-model='output.json[fieldName.field]'
+				class='field-long' 
+				ng-if="fieldName.field!='description' && specifications.specs[0].spec.properties[0].fields[fieldName.field].expected_type.indexOf('URL') !== -1 "
+				required 
+		/>
+
+		<!-- STR INPUT -->
+		<input 	type="text"
+				name="fieldName.field"
+				placeholder="{{fieldName.field}}"
+				ng-model='output.json[fieldName.field]'
+				class='field-long' 
+				ng-if="	fieldName.field!='description' 
+						&& specifications.specs[0].spec.properties[0].fields[fieldName.field].expected_type.indexOf('Text') !== -1"
+				required		 
+		/>
+
+		<!-- FIELD TEXTAREA INPUT (description only) -->
+		<textarea 	class='field-long field-textarea' 
+					ng-if="fieldName.field==='description'" *
+					placeholder="{{fieldName.field}}" 
+					ng-model='output.json[fieldName.field]' 
+					required
+		/>
+	</div>
+
+	<!-- MULTIPLE VALUES STRING FIELD-->
+	<div ng-if="specifications.specs[0].spec.properties[0].fields[fieldName.field].cardinality==='MANY'" ng-repeat="item in output.json[fieldName.field] track by $index">
+
+		<!-- FIRST ITEM -->
+		<input 	type="text"
+				name="fieldName.field"
+				placeholder="{{fieldName.field}}"
+				ng-model='output.json[fieldName.field][0]'
+				class='field-long' 
+				ng-if="fieldName.field!='description' && specifications.specs[0].spec.properties[0].fields[fieldName.field].expected_type.indexOf('Text') !== -1 && $first" 
+				required
+		/>
+
+		<!-- OTHER ITEMS -->
+		<input 	type="text"
+				name="fieldName.field"
+				placeholder="{{fieldName.field}}"
+				ng-model='output.json[fieldName.field][$index]'
+				class='field-long field-subvalue' 
+				ng-if="fieldName.field!='description' && specifications.specs[0].spec.properties[0].fields[fieldName.field].expected_type.indexOf('Text') !== -1 && !$first" 
+		/>
+		<span class="remove-subvalue fa fa-minus-circle" ng-if="!$first" ng-click="output.remove_item(fieldName.field, $index)">
+		</span>
+	</div>
+
+	<!-- FIELD PROVIDER (for datacatalog it's the only required field for which an object input is expected, this needs to be changed when yml is correctly written) -->
+	<div ng-if="fieldName.field==='provider'">
+		<select class="field-long" required ng-model='output.json[fieldName.field]["@type"]'>
+	    	<option disabled selected value> Select an option </option>
+	    	<option value="Person" ng-click="output.json[fieldName.field].name=undefined; output.json[fieldName.field].url=undefined"> 
+	    		The provider is a person 
+	    	</option>
+	    	<option value="Organization" ng-click="output.json[fieldName.field].name=undefined; output.json[fieldName.field].email=undefined"> 
+	    		The provider is an organization 
+	    	</option>
+		</select>
+
+		<div ng-if="output.json[fieldName.field]['@type']==='Person'">
+			<input type="text" name="provider_name" class="field-divided" placeholder="Provider name" ng-model="output.json[fieldName.field].name" required />&nbsp;
+		    <input type="email" name="provider_url" class="field-divided" placeholder="Provider email" ng-model="output.json[fieldName.field].email" required/>
+		</div>
+
+		<div ng-if="output.json[fieldName.field]['@type']==='Organization'">
+			<input type="text" name="provider_name" class="field-divided" placeholder="Provider name" ng-model="output.json[fieldName.field].name" required />&nbsp;
+		    <input type="url" name="provider_url" class="field-divided" placeholder="Provider URL" ng-model="output.json[fieldName.field].url" required/>
+		</div>
+	</div>
+
+	<!-- FIELD ADD SUBSEQUENT ITEMS (multiple values only) -->
+	<div 	class="add_item add_field fa fa-plus-circle" 
+			ng-click='output.json[fieldName.field].push("") '
+			ng-if="specifications.specs[0].spec.properties[0].fields[fieldName.field].cardinality==='MANY'"> 
+				<span>Add more {{ fieldName.field }}</span>
+	</div>
+</div>

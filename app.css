@@ -16,7 +16,7 @@ html * {
 html{overflow-x: hidden}
 
 body{
-    background-image: url('http://bioschemas.org/images/subtle_white_feathers.png');
+    /*background-image: url('http://bioschemas.org/images/subtle_white_feathers.png');*/
 }
 
 hr{
@@ -42,9 +42,11 @@ h2 em{
 }
 
 h3{
-    margin: 0px;
-    font-size: 1.4em;
+    margin: 0px 20px 0px 0px;
+    font-size: 1.5em;
     color: rgba(11, 121, 75, .9);
+    display:inline-block;
+    font-weight: bold;
 }
 
 
@@ -59,6 +61,14 @@ h4{
     margin-bottom: 10px;
     min-width: 170px;
     text-align: center;
+}
+
+button:hover{
+    cursor:pointer;
+}
+
+#editRequired ul{
+    padding-left: 0px !important
 }
 
 .row{
@@ -93,26 +103,49 @@ h4{
 }
 
 
+.main_page{
+    position: relative;
+    top: 80px;
+    width:100%;
+    padding:0px 20px;
+}
+
+.json_output{
+    border: 1px solid #DEDFE0;
+    border-radius: 2px;
+    box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.12);
+    background: #FFF;
+    padding: 20px 40px;
+    position: fixed;
+    right: 10px;
+    max-height: 90vh;
+    overflow-y:scroll;
+}
+
+
+.newEntry{
+    border-top:1px solid rgba(11, 121, 75, 0.8);;
+    padding-top: 30px;
+}
+
+.noPaddingTop{
+    padding-top: 0px !important;
+}
 /******************************************
 ************** MAIN CONTAINER *************
 **************************************** */
 .main_container{
-    width:1200px !important;
-    padding:20px 40px;
+    padding:20px;
     border:1px solid #DEDFE0;
     border-radius:2px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top:20px;
     box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.12);
     background: #FFF;
     position: absolute;
-    -webkit-transition: left 0.5s ease, opacity 0.7s ease;
-    left: 0;
-    right: 0;
+    -webkit-transition: left 0.5s ease, opacity 0.2s ease;
     display: inline-block;
     margin-bottom: 20px;
-    top:50px;
+    width:98%;
+    left:0;
 }
 
 .item_entry{
@@ -123,7 +156,7 @@ h4{
 
 .main_container .button{
     padding:30px;
-    margin-top: 90px;
+    margin-top: 40px;
     font-size: 4.5em;
     width:450px;
     margin-left: auto;
@@ -166,7 +199,7 @@ h4{
 
 form input{
     width:100%;
-    margin-bottom: 15px !important;
+    /*margin-bottom: 15px !important;*/
 }
 
 .field_description .field_name{
@@ -180,29 +213,59 @@ form .field_description{
     margin-bottom: 5px;
 }
 
+label.inline{
+    display:inline-block;
+}
+
 
 /******************************************************************************************************************************************************
 ************************************************************************************** FORM ***********************************************************
 **************************************************************************************************************************************************** */
+.field_title{
+    display: block;
+    margin-right:0px !important;
+    border-bottom:1px solid #ccc;
+    padding:10px 20px;
+    margin-bottom: 10px;
+}
+
+
+.question{
+    position: absolute !important;
+    top: -4px;
+}
+
+.question_title{
+    position: absolute !important;
+    right: 0px;
+    top: 5px;
+}
 
 .form-style-1 {
     margin:10px auto;
-    max-width: 800px;
-    padding: 20px 12px 10px 20px;
-    /*font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;*/à
+    padding: 30px 20px;
 }
-.form-style-1 li {
+
+ul.form_list li {
     padding: 0;
     display: block;
     list-style: none;
-    margin: 10px 0 0 0;
+    margin-bottom: 35px;
 }
-.form-style-1 label{
+
+input, textarea{
+    width: 97% !important;
+    border-right: 1px solid #ccc !important;
+}
+
+label{
     margin:0 0 3px 0;
     padding:0px;
     display:block;
-    font-weight: bold;
+    color:rgba(11, 121, 75, 0.9) !important;
+    font-weight: lighter;
 }
+
 .form-style-1 input[type=text],
 .form-style-1 input[type=date],
 .form-style-1 input[type=datetime],
@@ -216,40 +279,12 @@ select{
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
-    border:1px solid #BEBEBE;
-    padding: 7px;
+    /*border:1px solid #BEBEBE;*/
+    padding: 0px 7px;
     margin:0px;
     outline: none; 
 }
-.form-style-1 input[type=text]:focus,
-.form-style-1 input[type=date]:focus,
-.form-style-1 input[type=datetime]:focus,
-.form-style-1 input[type=number]:focus,
-.form-style-1 input[type=search]:focus,
-.form-style-1 input[type=time]:focus,
-.form-style-1 input[type=url]:focus,
-.form-style-1 input[type=email]:focus,
-.form-style-1 textarea:focus,
-.form-style-1 select:focus{
-    -moz-box-shadow: 0 0 8px #88D5E9;
-    -webkit-box-shadow: 0 0 8px #88D5E9;
-    box-shadow: 0 0 8px #88D5E9;
-    border: 1px solid #88D5E9;
-}
-.form-style-1 .field-divided{
-    width: 49.6%;
-}
 
-.form-style-1 .field-long{
-    width: 100%;
-}
-.form-style-1 .field-select{
-    width: 100%;
-}
-.form-style-1 .field-textarea{
-    height: 100px;
-    margin-bottom:20px;
-}
 
 .form-style-1 select{
     margin-bottom:10px;
@@ -259,7 +294,7 @@ select{
     resize:vertical;
 }
 
-.form-style-1 input[type=submit], .form-style-1 input[type=button], .form-style-1 button{
+.form-style-1 .submit{
     background: rgba(11, 121, 75, 0.8);
     padding: 8px 15px 8px 15px;
     border: none;
@@ -267,7 +302,7 @@ select{
     width:49.8%;
     display: inline-block;
 }
-.form-style-1 input[type=submit]:hover, .form-style-1 input[type=button]:hover, .form-style-1 button:hover{
+.form-style-1 .submit:hover{
     background: rgba(11, 121, 75, 0.9);
     box-shadow:none;
     -moz-box-shadow:none;
@@ -286,8 +321,12 @@ form.required_fields{
     background: rgba(11, 121, 75, .1);
 }
 
-form.required_fields label, form.required_fields input, form.required_fields textarea, .form-style-1 button, .form-style-1 select{
+form.required_fields input, form.required_fields textarea, .form-style-1 button, .form-style-1 select{
     font-size: 1.5em;
+}
+
+form.required_fields label{
+    font-size:1.4em;
 }
 
 .fa{
@@ -306,10 +345,6 @@ form.required_fields label, form.required_fields input, form.required_fields tex
     color:rgba(11, 121, 75, 1);
 }
 
-.form-style-1 label{
-    color:rgba(11, 121, 75, 0.9);
-}
-
 fieldset.subfield{
     margin-bottom: 15px;
     padding: 15px;
@@ -320,34 +355,151 @@ fieldset.subfield{
     font-size: 0.7em;
 }
 
+.smaller_field{
+    width:90% !important;
+}
+
+.field{
+    position: relative;
+}
+
+.field_desc{
+    display: none;
+    max-width: 60%;
+    vertical-align:top;
+    border:1px solid #ccc;background: #FFFFE0;
+    position: absolute;
+    padding:10px 20px;
+    text-align: justify;
+    margin-left: 10px;
+    margin-top:5px;
+    background: #FFFFE0;
+    z-index: 30;
+}
 
 .add_item{
+    margin-top:30px;
     padding-left:20px;
     margin-bottom: 20px;
 }
 
+.required_field{
+    padding: 0px;
+}
+
+ul.required_fields_container{
+    padding:0px;
+}
+
+.field-subvalue{
+    width:95% !important;
+}
+
+.remove-subvalue{
+    color:red;
+}
+
+.removesubval{
+    top: -6px;
+    right: -19px;
+}
+
+.object_field{
+    border:1px solid #ccc;
+    box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.12);
+}
+
+.object_field .field_header{
+    border-bottom:1px solid #ccc;
+    padding:10px 10px;
+}
+
+.object_field .field_form{
+    padding:20px;
+}
+
+.object_field .field_footer;
+.question {
+    border-top:1px solid #ccc !important;
+    padding-top: 20px;
+}
+
+.flex-container{
+    display: flex !important;
+    justify-content: space-between;
+}
+
+
 /******************************************
    ************** DatePICKER ************** 
 **************************************** */
-.ui-datepicker{
-    width:250px;
-    background: rgba(11, 121, 75, 1);
-    padding:10px;
-    display:none;
+.datepickerdemoBasicUsage{
+    width:90%;
 }
 
-.ui-datepicker table{
-    width:100%;
+.datepickerdemoBasicUsage md-content, md-content{
+    background-color: rgba(250,250,250,0);
 }
 
-.ui-datepicker .ui-datepicker-prev{
-    margin-right:15px;
+.md-datepicker-input-container{
+    padding:0px !important;
 }
 
-.ui-datepicker a, .ui-datepicker-title{
-    color:#fff;
+.md-datepicker-focused{
+    border-bottom-color:rgba(11, 121, 75, 0.9) !important;
 }
 
-.ui-datepicker a span{
-    cursor:pointer;
+.md-default-theme .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator, .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator, .md-default-theme .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator, .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator {
+  background: rgba(11, 121, 75, 0.9) !important;
+}
+
+.md-default-theme .md-datepicker-open .md-datepicker-calendar-icon, .md-datepicker-open .md-datepicker-calendar-icon {
+    fill: rgba(11, 121, 75, 0.9) !important;
+}
+
+md-input-container {
+    margin: 0px !important;
+    padding:0px !important;
+    display:block !important;
+}
+
+md-content{
+    overflow:visible !important;
+    padding:0px !important;
+}
+
+.md-input-focused label,
+.md-input-has-value label{
+    transform: translate3d(0, 7px,0) scale(1) !important;
+}
+
+
+textarea {
+    min-height: 180px !important;
+    border-right:1px solid rgba(0,0,0,0.12) !important;
+}
+
+md-input-container .md-resize-handle {
+    bottom: 0px !important;
+}
+
+.md-datepicker-input{
+    min-width:250px !important;
+}
+
+md-tooltip{
+    max-width: 400px !important;
+    font-size: 1.1em !important;
+    overflow: visible !important;
+}
+
+md-tooltip div{
+    overflow: visible !important;
+    height:auto !important;
+    text-overflow:visible !important;
+    white-space: normal !important;
+    padding:10px !important;
+    border:1px solid #ccc;
+    background: #FFFFE0 !important;
+    color:rgba(0,0,0,0.87); !important;
 }

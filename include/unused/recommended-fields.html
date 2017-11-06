@@ -1,0 +1,71 @@
+<script>
+	$.datepicker.setDefaults({
+	    // When a date is selected from the picker
+	    onSelect: function(newValue) {
+	        if (window.angular && angular.element){
+	            // Update the angular model
+	            angular.element(this).controller("ngModel").$setViewValue(newValue);
+	        }
+	    }
+	});
+	$( function() {
+	    $( "#datepicker" ).datepicker();
+	    $( "#datepicker2" ).datepicker();
+	});
+</script>
+
+<h2> Bioschemas DataCatalog <BR> <em> - Recommended Fields - </em></h2>
+
+<form class="required_fields" name="recommended_fields_form">
+	<ul class="form-style-1" ng-repeat="fields in specifications.specs[0].spec.properties" ng-if="fields.state==='recommended'">
+		<li ng-repeat='field in fields.fields'>
+
+			<!-- INPUT IS NOT A DATE (GOT ISSUES WITH FUNCTION SEE BELOW) -->
+			<div recommended-fields-interpretor field="{{field.name}}" ng-if='field.expected_type[0]!="Date"'> </div>
+
+
+			<!-- TODO: pass the date function and this widget to the recommended-field-interpretor.html template -->
+			<!-- INPUT IS A DATE -->
+			<fieldset class="object_field form-group field_title" ng-if='field.expected_type[0]==="Date"'>
+
+				<!-- TITLE AND DESCRIPTION -->
+				<div class="field_header">
+					<label style="display:inline-block"> {{ field.name }} </label>
+						<span 	id="{{'description_clicker_2_' + $index}}" 
+								style="margin-left:10px" 
+								class="fa fa-question-circle question" 
+								ng-mouseenter="output.display_description('2_'+$index, 'show')"
+								ng-mouseleave="output.display_description('2_'+$index, 'hide')"> 
+					</span>
+					<div 	class="fa fa-chevron-down" 
+							id="{{'#chevron_'+$index}}" 
+							style="right:0; float:right; position:relative; top:7px; font-size: 1.5em;" 
+							data-toggle="collapse" 
+							data-target="{{'#field_'+$index}}"
+							ng-click="panel.change_chevron('#chevron_'+$index);"
+					> </div>
+					<div class="field_desc" id="{{'desc_2_'+$index}}" ng-if='specifications.specs[0].spec.properties[1].fields[fieldName.field].sdo_desc!=""'>
+						{{ specifications.specs[0].spec.properties[1].fields[field.name].sdo_desc }}
+					</div>
+				</div>
+				
+				<div class="field_form collapse in" id="{{'field_'+$index}}">							
+					<input 	 
+							id="datepicker" 
+							type='text' 
+							name="dateModified" 
+							placeholder="Date of the last modifications"
+							ng-model='output.json.dateModified' 
+					/>
+				</div>
+			</fieldset>
+		</li>
+
+		<li>
+			<button type="submit" ng-click="panel.go_to_required()"> <em class="fa fa-angle-double-left"></em> &nbsp;Previous </button>
+			<button type="submit" ng-click="panel.go_to_dataset()">Next &nbsp; <em class="fa fa-angle-double-right"></em> </button>
+		</li>
+
+	</ul>
+
+</form>
