@@ -1,0 +1,74 @@
+{
+	"fields": {
+
+		"required": [{
+			"name": {
+				"type": "text",
+				"description": "The name of the item",
+				"cardinality": "Many",
+				"field": "input"
+			},
+			"startDate": {
+				"type": "date",
+				"description": "The start date and time of the item (in ISO 8601 date format)",
+				"cardinality": "One",
+				"field": "date-picker"
+			},
+			"endDate": {
+				"type": "date",
+				"description": "The end date and time of the item (in ISO 8601 date format)",
+				"cardinality": "One",
+				"field": "date-picker"
+			},
+			"description": {
+				"type": "text",
+				"description": "A short description of the item.",
+				"cardinality": "Many",
+				"field": "textarea"
+			},
+			"location": {
+				"type": "PostalAddress",
+				"description": "The location of the event. It is recommended to use Place, and within Place present the PostalAddress and GeoCoordinates",
+				"cardinality": "One",
+				"field": "object",
+				"subfields": ["name"]
+			},
+			"contact":{
+				"type": "Person",
+				"description": "Main point of contact that can be contacted for general queries. This would be an event organiser or an administrator.",
+				"cardinality": "Many",
+				"field": "object",
+				"subfields": ["name", "email"]
+			},
+			"hostInstitution":{
+				"type": "Organization",
+				"description": "The organization or institution responsible for hosting the event (not necessarily responsible for organizing).",
+				"cardinality": "Many",
+				"field": "object",
+				"subfields": ["name", "url"]
+			},
+			"eventType":{
+				"type": "text",
+				"description": "This can be one of 4 options",
+				"vocabulary": ["Workshops and courses", "Meetings and conferences", "Receptions and networking", "Awards and prizegivings"],
+				"cardinality": "Many",
+				"field": "select"
+			}
+		}],
+
+		"recommended": [{
+			"url": {
+				"type": "text"
+			},
+			"keywords": {
+				"type": "date"
+			},
+			"topic":{
+				"type": ""
+			}
+		}]
+	}
+}
+
+
+

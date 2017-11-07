@@ -13,7 +13,8 @@
 
             <li class="field_form" ng-repeat="subfield in fieldgroup | orderBy:'priority'">
                 <md-content>
-                    <div field-input ng-if="subfield.output==='input' || subfield.output==='textarea'" fieldProperties="{{subfield}}"> </div>
+                {{subfield}}
+                    <!-- <div field-input ng-if="subfield.output==='input' || subfield.output==='textarea'" fieldProperties="{{subfield}}"> </div> -->
                 </md-content>       	    
             </li>
 

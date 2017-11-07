@@ -1,24 +1,48 @@
 <!-- SINGLE VALUE FIELDS -->
 <div ng-if="field.cardinality==='ONE'" class="object_field">
 
-	<div class="field_title">
-        <h3>{{field.name}}</h3>
-        <md-button class="md-icon-button question_title">
+    <div class="question_title">
+        <md-button class="md-icon-button ">
             <md-tooltip md-direction="left">{{field.sdo_desc | trust}}</md-tooltip>
             <md-icon class="fa fa-question-circle"> </md-icon>
-         </md-button>
+        </md-button>
     </div>
 
-    <div class="field_form">
-	    <md-input-container ng-repeat="subfield in field.fields.fields" ng-click="output.json[field.name]['@type']=field.fields['@type']">
-    	    <label>{{field.name}}'s {{subfield}} </label>
-    	    <!-- input short text -->
-            <input  name="{{'item_'+field.name+subfield}}" 
-                    ng-required="{{field.marginality==='Minimum'}}" 
-                    ng-model="output.json[field.name][subfield]">
-            </input>
-		</md-input-container>
-	</div>
+    <uib-accordion>
+        <div uib-accordion-group class="panel-default" is-open="status.open" ng-init="status = {open: true}">
+
+            <uib-accordion-heading>
+                <label>{{field.name}}</label> 
+                <!--<i class="pull-right fa " ng-class="{'fa-chevron-down': status.open, 'fa-chevron-right': !status.open}"></i>-->
+
+                <md-button class="md-icon-button pull-right">
+                    <md-tooltip md-direction="bottom" ng-if="status.open">Close tab</md-tooltip>
+                    <md-tooltip md-direction="bottom" ng-if="!status.open">Open tab</md-tooltip>
+                    <md-icon class="fa fa-chevron-down" ng-class="{'fa-chevron-down': status.open, 'fa-chevron-right': !status.open}"> </md-icon>
+                </md-button>
+
+            </uib-accordion-heading>
+        
+
+            <div class="field_form">
+                <ul>
+                    <li ng-repeat="subfield in field.fields.fields">
+                        <md-content ng-click="output.json[field.name]['@type']=field.fields['@type']">
+                            <md-input-container>
+                                    <label>{{field.name}}'s {{subfield}} </label>
+                                    <!-- input short text -->
+                                    <input  name="{{'item_'+field.name+subfield}}" 
+                                            ng-required="{{field.marginality==='Minimum'}}" 
+                                            ng-model="output.json[field.name][subfield]">
+                                    </input>
+                            </md-input-container>
+                        </md-content>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </uib-accordion>    
 </div>
 
 
@@ -26,46 +50,71 @@
 <!-- MULTIPLE VALUES VALUE FIELDS -->
 <div ng-if="field.cardinality==='MANY'" class="object_field">
 
-	<div class="field_title">
-        <h3>{{field.name}}</h3>
-        <md-button class="md-icon-button question_title">
+    <div class="question_title">
+        <md-button class="md-icon-button ">
             <md-tooltip md-direction="left">{{field.sdo_desc | trust}}</md-tooltip>
             <md-icon class="fa fa-question-circle"> </md-icon>
-         </md-button>
+        </md-button>
     </div>
 
-    <!-- INITIATOR (field 0) --> 
-     <div class="field_form">
-        <md-input-container class="md-block" md-no-float ng-repeat="subfield in field.fields.fields">
-            <label>{{field.name}}'s {{subfield.toLowerCase()}}</label>	    
-            <!-- input short text -->
-            <input  name="{{'item_'+field.name+'_'+subfield}}"  
-                    ng-required="{{field.marginality==='Minimum'}}" 
-                    ng-model="output.json[field.name][0][subfield]"
-                    ng-click="output.fieldToArray(field.name);output.json[field.name][0]['@type']=field.fields['@type']">
-            </input>
-    	</md-input-container>
-    </div>
+    <uib-accordion>
+        <div uib-accordion-group class="panel-default" is-open="status.open" ng-init="status = {open: true}">
 
-    <div class="field_form noPaddingTop" ng-repeat="subitem in output.json[field.name] track by $index" ng-if="!$first">
-        <div class="newEntry">
-            <md-input-container class="md-block" md-no-float ng-repeat="subfield in field.fields.fields">
-                <label>{{field.name}}'s {{subfield.toLowerCase()}} {{$parent.$index}}</label>      
-                <!-- input short text -->
-                <input  name="{{'item_'+field.name+'_'+$index+subfield}}"  
-                        ng-required="{{field.marginality==='Minimum'}}" 
-                        ng-model="output.json[field.name][$parent.$index][subfield]"
-                        ng-click="output.json[field.name][$parent.$index]['@type']=field.fields['@type']">
-                </input>
-            </md-input-container>
-            <md-button class="md-icon-button removesubval" ng-click="output.remove_item(field.name, $index);">
-                <md-tooltip md-direction="right">remove item</md-tooltip>
-                <md-icon class="remove-subvalue fa fa-minus-circle"> </md-icon>
-            </md-button>
+            <uib-accordion-heading>
+                <label>{{field.name}}</label> 
+                <!--<i class="pull-right fa " ng-class="{'fa-chevron-down': status.open, 'fa-chevron-right': !status.open}"></i>-->
+
+                <md-button class="md-icon-button pull-right">
+                    <md-tooltip md-direction="bottom" ng-if="status.open">Close tab</md-tooltip>
+                    <md-tooltip md-direction="bottom" ng-if="!status.open">Open tab</md-tooltip>
+                    <md-icon class="fa fa-chevron-down" ng-class="{'fa-chevron-down': status.open, 'fa-chevron-right': !status.open}"> </md-icon>
+                </md-button>
+            </uib-accordion-heading>
+
+            <div class="field_form">
+                <ul>
+                    <!-- INITIATOR (field 0) -->
+                    <li>
+                        <ul>
+                            <li ng-repeat="subfield in field.fields.fields" md-no-float>
+                                <md-input-container class="md-block">
+                                    <label>{{field.name}}'s {{subfield.toLowerCase()}}</label>      
+                                    <!-- input short text -->
+                                    <input  name="{{'item_'+field.name+'_'+subfield}}"  
+                                            ng-required="{{field.marginality==='Minimum'}}" 
+                                            ng-model="output.json[field.name][0][subfield]"
+                                            ng-click="output.fieldToArray(field.name);output.json[field.name][0]['@type']=field.fields['@type']">
+                                    </input>
+                                </md-input-container>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li ng-repeat="subitem in output.json[field.name] track by $index" ng-if="!$first" class="newEntry">
+                        <ul>
+                            <li md-no-float ng-repeat="subfield in field.fields.fields">
+                                <md-input-container class="md-block" >
+                                    <label>{{field.name}}'s {{subfield.toLowerCase()}} {{$parent.$index}}</label>      
+                                    <!-- input short text -->
+                                    <input  name="{{'item_'+field.name+'_'+$index+subfield}}"  
+                                            ng-required="{{field.marginality==='Minimum'}}" 
+                                            ng-model="output.json[field.name][$parent.$index][subfield]"
+                                            ng-click="output.json[field.name][$parent.$index]['@type']=field.fields['@type']">
+                                    </input>
+                                </md-input-container>
+                            </li>
+                            <md-button class="md-icon-button removesubval" ng-click="output.remove_item(field.name, $index);">
+                                <md-tooltip md-direction="right">remove item</md-tooltip>
+                                <md-icon class="remove-subvalue fa fa-minus-circle"> </md-icon>
+                            </md-button>
+                        </ul>
+                    </li> 
+                </ul>
+            </div>           
         </div>
-    </div>
-
-
+    </uib-accordion>
+     
+    
 
 	<!-- ADD SUBVALUES TO FIELD (multiple values only) -->
     <md-button class="md-icon-button field_footer" ng-click='console.log("lol");output.json[field.name].push("")'>

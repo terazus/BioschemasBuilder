@@ -17,6 +17,9 @@ html{overflow-x: hidden}
 
 body{
     /*background-image: url('http://bioschemas.org/images/subtle_white_feathers.png');*/
+    position: relative !important; 
+    width: 100% !important; 
+    top: 0px !important;
 }
 
 hr{
@@ -51,17 +54,33 @@ h3{
 
 
 h4{
-    font-size: 1.3em;
-    margin:0px;
-    border:rgba(11, 121, 75, 1);
-    background:rgba(11, 121, 75, 0.9);
-    color:#fff;
-    padding:10px 20px;
-    display: inline-block;
-    margin-bottom: 10px;
-    min-width: 170px;
-    text-align: center;
+    border-radius:0px;
 }
+
+.md-datepicker-input-mask{
+    display:none !important;
+}
+
+
+.panel{
+    border:0px !important;
+}
+
+.panel-default, .panel-default > .panel-heading{
+    background:transparent;
+    border-bottom:1px solid #ccc;
+    border-radius:0px !important;
+}
+
+.panel-group .panel{
+    border-radius:0px !important;
+    border-bottom:1px solid #ccc !important;
+}
+
+.panel-group{
+    margin-bottom: 0px !important;
+}
+
 
 button:hover{
     cursor:pointer;
@@ -125,7 +144,7 @@ button:hover{
 
 .newEntry{
     border-top:1px solid rgba(11, 121, 75, 0.8);;
-    padding-top: 30px;
+    padding-top: 30px !important;
 }
 
 .noPaddingTop{
@@ -233,11 +252,12 @@ label.inline{
 .question{
     position: absolute !important;
     top: -4px;
+    right:-23px;
 }
 
 .question_title{
     position: absolute !important;
-    right: 0px;
+    right: -25px;
     top: 5px;
 }
 
@@ -250,12 +270,13 @@ ul.form_list li {
     padding: 0;
     display: block;
     list-style: none;
-    margin-bottom: 35px;
+    margin-bottom: 45px;
 }
 
 input, textarea{
     width: 97% !important;
-    border-right: 1px solid #ccc !important;
+    border-right-width: 1px !important;
+    border-right-style: solid !important;
 }
 
 label{
@@ -407,6 +428,7 @@ ul.required_fields_container{
 .object_field{
     border:1px solid #ccc;
     box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.12);
+    width:97%;
 }
 
 .object_field .field_header{
@@ -415,7 +437,7 @@ ul.required_fields_container{
 }
 
 .object_field .field_form{
-    padding:20px;
+    padding: 20px 0px 0px 0px;
 }
 
 .object_field .field_footer;
@@ -476,7 +498,6 @@ md-content{
 
 textarea {
     min-height: 180px !important;
-    border-right:1px solid rgba(0,0,0,0.12) !important;
 }
 
 md-input-container .md-resize-handle {
@@ -502,4 +523,23 @@ md-tooltip div{
     border:1px solid #ccc;
     background: #FFFFE0 !important;
     color:rgba(0,0,0,0.87); !important;
+}
+
+
+.nav, .pagination, .carousel, .panel-title a { 
+    cursor: pointer; 
+}
+
+
+.fa.pull-right{
+    top: -21px;
+    position: relative;
+    margin-left:0px !important;
+}
+
+button.pull-right
+{
+    position: relative;
+    top: -35px;
+    left: 19px;
 }

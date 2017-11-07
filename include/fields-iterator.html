@@ -33,8 +33,7 @@
 							<div field-input ng-if="field.output==='input' || field.output==='textarea'" fieldProperties="{{field}}"> </div>
 							<div field-object ng-if="field.output==='object'"> </div>
 
-							<div field-import ng-if="field.output==='import'"> 
-							</div>
+							<div field-import ng-if="field.output==='import'"> </div>
 
 						</md-content>
 					</li>
@@ -46,7 +45,7 @@
 					<li ng-repeat="field in fieldgroup | orderBy:'priority'">
 						<md-content>
 
-							<div field-input ng-if="field.output==='input' || field.output==='textarea'"> </div>
+							<div field-input ng-if="field.output==='input' || field.output==='textarea'" fieldProperties="{{field}}"> </div>
 							<div field-object ng-if="field.output==='object'"> </div>
 
 						</md-content>

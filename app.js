@@ -1,5 +1,5 @@
 (function () {
-	var app = angular.module('builder', ['ngMaterial', 'ngMessages', 'ngAria', 'ngAnimate'])
+	var app = angular.module('builder', ['ngMaterial', 'ngMessages', 'ngAria', 'ngAnimate', 'ui.bootstrap'])
 	.config(function($mdThemingProvider) {
 	  	$mdThemingProvider.theme('default')
 		    .primaryPalette('teal');
